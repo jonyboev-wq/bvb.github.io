@@ -245,6 +245,34 @@
   <script>
     /* === РЕДАКТИРУЕМЫЕ НАСТРОЙКИ (CONFIG) === */
     const CONFIG = JSON.parse(localStorage.getItem('shopConfig')) || {
+      <script>
+// === TELEGRAM НАСТРОЙКИ И ОТПРАВКА ===
+const TG = {
+  token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM", // твой токен
+  chat_id: 5223524937                                   // твой chat_id
+};
+
+async function tgSend(text) {
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TG.chat_id,
+        text,
+        parse_mode: "HTML" // можно использовать <b>жирный</b>, \n — перенос строки
+      })
+    });
+    if (!res.ok) {
+      console.error("Telegram error:", await res.text());
+      alert("Ошибка отправки в Telegram (см. консоль).");
+    }
+  } catch (e) {
+    console.error(e);
+    alert("Сетевая ошибка при отправке в Telegram.");
+  }
+}
+</script>
       name: "BVB",
       tag: "Официальная страница магазина",
       heroTitle: "Лучшие товары по честным ценам",
