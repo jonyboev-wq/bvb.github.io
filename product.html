@@ -1,84 +1,231 @@
-<!DOCTYPE html>
-<html lang="ru" data-theme="">
-<head>
+<!DOCTYPE html><html lang="ru"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Товар — BVB</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>BVB — Товар</title>
+<link rel="icon" href="logo.png">
 <style>
-:root{--bg:#f7fafc;--bg-2:#ffffff;--card:#ffffff;--muted:#5b6776;--text:#0b1220;--accent:#2563eb;--border:#e5e7eb;--shadow:0 10px 24px rgba(16,24,40,.08);--radius:16px;--maxw:1100px}
-[data-theme="dark"]{--bg:#0b1220;--bg-2:#0e1729;--card:#111a2e;--muted:#9fb0c8;--text:#e6eef9;--accent:#3b82f6;--border:#1d2a44;--shadow:0 12px 34px rgba(0,0,0,.35)}
+:root{
+  --bg:#f5f7fb; --bg2:#ffffff; --text:#0f172a; --muted:#475569;
+  --primary:#2563eb; --primary-2:#1d4ed8; --ring:#c7d2fe;
+  --card:#ffffff; --border:#e5e7eb; --shadow:0 10px 24px rgba(16,24,40,.08);
+}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
-body{font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);line-height:1.6}
-.container{max-width:var(--maxw);margin:0 auto;padding:16px}
-header{position:sticky;top:0;background:var(--bg-2);border-bottom:1px solid var(--border);backdrop-filter:saturate(150%) blur(8px);z-index:10}
-[data-theme="dark"] header{background:rgba(14,23,41,.9)}
-.nav{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:12px;background:var(--bg-2);cursor:pointer;color:var(--text)}
-.btn.primary{background:linear-gradient(180deg,var(--accent),#1d4ed8);border:none;color:#fff}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px}
-.grid2{display:grid;grid-template-columns:1.1fr 1fr;gap:14px}
-@media (max-width:760px){.grid2{grid-template-columns:1fr}}
-img.p{width:100%;border-radius:16px;border:1px solid var(--border);object-fit:cover;max-height:520px}
-.badge{color:var(--muted);font-size:13px}
-.price{font-weight:700;font-size:20px;margin-top:6px}
+body{font:16px system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; background:var(--bg); color:var(--text);}
+a{text-decoration:none;color:inherit}
+.container{max-width:1100px;margin:0 auto;padding:16px}
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.8);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand img{width:36px;height:36px;border-radius:9px}
+.brand h1{font-size:18px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{display:block;color:var(--muted);font-size:12px}
+.nav-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);box-shadow:var(--shadow);transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(180deg,var(--primary),var(--primary-2));color:#fff;border:none}
+.btn.badge{position:relative}
+.badge-dot{position:absolute;top:-6px;right:-6px;background:#38bdf8;color:#06202e;border-radius:999px;padding:1px 6px;font-size:12px;border:1px solid #0b1729}
+.hero{padding:28px 0 10px}
+.hero h2{font-size:32px;margin:0 0 8px}
+.hero p{color:var(--muted);margin:0 0 16px}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap}
+.socials{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.socials a{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:var(--bg2)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.pad{padding:16px}
+.product{grid-column:span 6;display:grid;grid-template-columns:110px 1fr;gap:12px;cursor:pointer}
+.product img{width:110px;height:110px;border-radius:12px;object-fit:cover;border:1px solid var(--border)}
+.product h3{margin:0 0 6px;font-size:16px}
+.tag{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;border:1px dashed var(--border);font-size:12px;color:var(--muted)}
+.price{font-weight:700}
+footer{border-top:1px solid var(--border);margin-top:24px}
+.small{font-size:12px;color:var(--muted)}
+/* product page */
+.p-wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+.p-img{width:100%;border-radius:16px;border:1px solid var(--border);object-fit:cover}
+.p-price{font-weight:800;font-size:20px}
+.qty{display:flex;gap:8px;align-items:center}
+.qty input{width:80px;text-align:center}
+/* cart drawer */
+#cart{position:fixed;inset:0;display:none;place-items:center;background:rgba(15,23,42,.55)}
+.cart-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);width:min(860px,96vw);max-height:90vh;overflow:auto}
+.cart-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+.cart-list{padding:8px 16px;display:grid;gap:10px}
+.cart-item{display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;border-bottom:1px dashed var(--border);padding:8px 0}
+.cart-item img{width:60px;height:60px;border-radius:10px;object-fit:cover;border:1px solid var(--border)}
+.cart-foot{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--border)}
+/* admin button */
+#admin-fab{position:fixed;right:12px;bottom:12px;opacity:.55}
+#admin-fab:hover{opacity:1}
+/* theme dark */
+[data-theme="dark"]{
+  --bg:#0b1220; --bg2:#0e1729; --text:#e6eef9; --muted:#9fb0c8;
+  --primary:#3b82f6; --primary-2:#1d4ed8; --card:#111a2e; --border:#1d2a44; --ring:#243b76;
+  --shadow:0 10px 24px rgba(0,0,0,.4);
+}
+@media(max-width:860px){ .p-wrap{grid-template-columns:1fr} .product{grid-column:span 12} }
 </style>
-</head>
-<body>
-<header class="container nav">
-  <div class="nav">
-    <a class="btn" href="index.html">← Каталог</a>
-    <div class="nav" style="gap:8px">
-      <button class="btn" id="theme-toggle">🌙 Тема</button>
-      <a class="btn" href="admin.html">🔧 Админка</a>
-    </div>
-  </div>
-</header>
-
+</head><body onload="init()">
+<header><div class="container nav"></div></header>
 <main class="container">
-  <div id="wrap" class="card">
-    <div id="notfound" style="display:none">
-      <h2>Товар не найден</h2>
-      <p class="badge">Возможно, ссылка устарела. Вернитесь в каталог.</p>
-    </div>
-    <div id="view" style="display:none">
-      <div class="grid2">
-        <img id="pimg" class="p" src="" alt="">
-        <div>
-          <h1 id="ptitle" style="margin:0 0 6px"></h1>
-          <div class="badge" id="ptag"></div>
-          <div class="price" id="pprice"></div>
-          <p id="pdesc" style="margin-top:10px"></p>
-          <div class="nav" style="gap:8px;margin-top:10px">
-            <div class="btn" id="minus">−</div>
-            <div class="btn" id="qty">1</div>
-            <div class="btn" id="plus">+</div>
-            <button class="btn primary" id="add">Добавить в корзину</button>
-          </div>
+  <div id="view" class="pad card">
+    <a class="btn" href="index.html">← Назад</a>
+    <div class="p-wrap" style="margin-top:12px">
+      <img id="img" class="p-img" alt="">
+      <div>
+        <h2 id="title"></h2>
+        <div class="tag" id="tag"></div>
+        <div class="p-price" id="price"></div>
+        <p class="small" id="desc"></p>
+        <div class="qty" style="margin:8px 0 12px">
+          <label>Количество <input id="qty" type="number" min="1" value="1"></label>
+          <button class="btn primary" id="add">Добавить в корзину</button>
+        </div>
+        <div style="display:flex;gap:8px">
+          <a class="btn" id="share" href="#">Поделиться</a>
         </div>
       </div>
     </div>
   </div>
 </main>
-
+<footer><div class="container pad"></div></footer>
+<a id="admin-fab" class="btn" href="admin.html">⚙️</a>
+<div id="cart"></div>
 <script>
-/* Theme */
-const applyTheme=(t)=>{const el=document.documentElement;if(!t){t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}el.setAttribute('data-theme',t==='dark'?'dark':'');localStorage.setItem('theme',t);}
-applyTheme(); document.getElementById('theme-toggle').onclick=()=>applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
-/* Utils */
-const $=(s,el=document)=>el.querySelector(s); const qs=(name)=>new URL(location.href).searchParams.get(name); const fmt=n=>(n||0).toLocaleString('ru-RU')+' ₽';
-/* Load config */
-let CONFIG={products:[]}; (async()=>{ try{const r=await fetch('shopConfig.json',{cache:'no-store'}); if(r.ok) CONFIG=await r.json();}catch(e){} const loc=localStorage.getItem('shopConfig'); if(loc){try{CONFIG={...CONFIG,...JSON.parse(loc)};}catch(e){}}
-  const id=qs('id'); const p=(CONFIG.products||[]).find(x=>(x.id||'')===id);
-  if(!p){ $('#notfound').style.display=''; return; }
-  $('#view').style.display='';
-  $('#ptitle').textContent=p.title; $('#ptag').textContent=p.tag||''; $('#pprice').textContent=p.priceText || (p.price?fmt(p.price):''); $('#pdesc').textContent=p.desc||''; $('#pimg').src=p.img;
-  let q=1; const show=()=>$('#qty').textContent=q; $('#minus').onclick=()=>{q=Math.max(1,q-1);show();}; $('#plus').onclick=()=>{q++;show();}; show();
-  const CART_KEY='shopCart'; let cart = JSON.parse(localStorage.getItem(CART_KEY)||'[]');
-  const add=()=>{const row=cart.find(i=>i.id===p.id); if(row) row.qty+=q; else cart.push({id:p.id, qty:q}); localStorage.setItem(CART_KEY,JSON.stringify(cart)); alert('Добавлено в корзину');}
-  $('#add').onclick=add;
-})();
+const LS_KEY='bvb_cart'; const CFG_KEY='bvb_cfg_override'; 
+function money(n){ n = Number(n||0); return n.toLocaleString('ru-RU')+' ₽'; }
+function slugify(s){ return String(s).toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-zа-я0-9-]/g,''); }
+async function loadConfig(){
+  try{
+    const res = await fetch('shopConfig.json?'+Date.now());
+    const cfg = await res.json();
+    const local = JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
+    return {...cfg, ...local, products: (local.products||cfg.products)};
+  }catch(e){ console.error('Config load error', e); return {name:'BVB', tag:'', email:'', phone:'', socials:[], products:[]}; }
+}
+function setTheme(t){ document.documentElement.setAttribute('data-theme', t); localStorage.setItem('theme', t); }
+function toggleTheme(){ setTheme( (localStorage.getItem('theme')||'light')==='light' ? 'dark':'light' ); }
+function initTheme(){ setTheme(localStorage.getItem('theme')||'light'); }
+function getCart(){ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }
+function saveCart(c){ localStorage.setItem(LS_KEY, JSON.stringify(c)); updateCartBadge(); }
+function addToCart(item){ const c=getCart(); c.push(item); saveCart(c); openCart(); }
+function updateCartBadge(){ const c=getCart(); const b=document.querySelector('#cart-count'); if(b){ b.textContent=c.length; }}
+function renderHeader(cfg,active){
+  const el = document.querySelector('header .container');
+  el.innerHTML = `
+  <div class="brand">
+    <img src="logo.png" alt="logo"/>
+    <div><h1>${cfg.name||'BVB'}</h1><small>${cfg.tag||''}</small></div>
+  </div>
+  <div class="nav-actions">
+    <a class="btn ${active==='catalog'?'primary':''}" href="index.html">Каталог</a>
+    <a class="btn" id="btn-opt" href="wholesale.html">Опт</a>
+    <button class="btn" id="btn-theme">🌙 Тема</button>
+    <a class="btn badge" id="cart-btn" href="#"><span>🧺 Корзина</span> <span id="cart-count" class="badge-dot">0</span></a>
+  </div>`;
+  document.querySelector('#btn-theme').onclick=toggleTheme;
+  document.querySelector('#cart-btn').onclick=(e)=>{e.preventDefault();openCart();};
+  updateCartBadge();
+}
+function renderFooter(cfg){
+  document.querySelector('footer .container').innerHTML = `
+  <div class="small">© ${new Date().getFullYear()} ${cfg.name||'BVB'}. Все права защищены.</div>`;
+}
+function socialsRow(cfg){
+  const wrap = document.querySelector('#socials'); if(!wrap) return;
+  wrap.innerHTML='';
+  (cfg.socials||[]).forEach(s=>{
+    const a=document.createElement('a'); a.href=s.url; a.target='_blank'; a.rel='noopener';
+    a.innerHTML = `${icon(s.icon)} <span>${s.label}</span>`;
+    wrap.appendChild(a);
+  });
+}
+function icon(name){
+  const d={
+    telegram:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.036 15.47l-.38 5.36c.542 0 .776-.233 1.056-.512l2.536-2.43 5.256 3.84c.964.533 1.654.252 1.916-.89l3.472-16.27c.308-1.44-.52-2.004-1.46-1.654L1.05 9.22C-.346 9.78-.324 10.62.81 10.98l5.2 1.62L19.384 5.2c.616-.404 1.178-.18.716.224"/></svg>',
+    whatsapp:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.9A10 10 0 004 18.6L3 22l3.5-.9A10 10 0 1019.9 4zM12 20a8 8 0 110-16 8 8 0 010 16z"/></svg>',
+    avito:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="7" r="3"/><circle cx="16" cy="6" r="2"/><circle cx="18" cy="14" r="3"/><circle cx="8" cy="17" r="2.5"/></svg>'
+  }; return d[name]||'';
+}
+function cartUI(){
+  const el=document.getElementById('cart'); el.innerHTML=`
+    <div class="cart-box">
+      <div class="cart-head"><b>Корзина</b>
+        <div style="display:flex;gap:8px">
+          <button class="btn" id="cart-close">Закрыть</button>
+        </div>
+      </div>
+      <div class="cart-list" id="cart-list"></div>
+      <div class="cart-foot">
+        <div><b>Итого: <span id="cart-sum">0 ₽</span></b></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="ord-name" placeholder="Ваше имя" style="padding:10px;border:1px solid var(--border);border-radius:10px">
+          <input id="ord-phone" placeholder="Телефон" style="padding:10px;border:1px solid var(--border);border-radius:10px">
+          <button class="btn primary" id="cart-order">Оформить заказ</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('cart-close').onclick=closeCart;
+  document.getElementById('cart-order').onclick=sendOrder;
+}
+function openCart(){ cartUI(); renderCart(); document.getElementById('cart').style.display='grid'; }
+function closeCart(){ document.getElementById('cart').style.display='none'; }
+function renderCart(){
+  const list = document.getElementById('cart-list'); const c=getCart(); list.innerHTML='';
+  let sum=0;
+  c.forEach((it,idx)=>{
+    sum += (Number(it.price)||0) * (it.qty||1);
+    const div=document.createElement('div'); div.className='cart-item';
+    div.innerHTML = `
+      <img src="${it.img}" alt="">
+      <div><div><b>${it.title}</b></div><div class="small">${money(it.price)} × ${it.qty}</div></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn" data-idx="${idx}" data-d="-1">−</button>
+        <button class="btn" data-idx="${idx}" data-d="+1">+</button>
+        <button class="btn" data-idx="${idx}" data-d="x">×</button>
+      </div>`;
+    list.appendChild(div);
+  });
+  document.getElementById('cart-sum').textContent = money(sum);
+  list.querySelectorAll('button').forEach(b=>b.onclick=(e)=>{
+    const idx=+b.dataset.idx; const d=b.dataset.d; const c=getCart();
+    if(d==='x'){ c.splice(idx,1); }
+    else { c[idx].qty = Math.max(1, (c[idx].qty||1) + (d==='+1'?1:-1)); }
+    saveCart(c); renderCart();
+  });
+}
+async function sendOrder(){
+  const name=document.getElementById('ord-name').value.trim();
+  const phone=document.getElementById('ord-phone').value.trim();
+  if(!name||!phone){ alert('Укажите имя и телефон'); return; }
+  const cfg = await loadConfig();
+  const lines = getCart().map((it,i)=> `${i+1}. ${it.title} — ${it.qty} × ${money(it.price)}`).join('\n');
+  const text = `<b>Новый заказ</b>\n${lines}\n\nИмя: ${name}\nТелефон: ${phone}`;
+  try{
+    if(cfg.telegram && cfg.telegram.token && cfg.telegram.chat_id){
+      await fetch(`https://api.telegram.org/bot${cfg.telegram.token}/sendMessage`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({chat_id: cfg.telegram.chat_id, text, parse_mode:'HTML'})
+      });
+      alert('Заявка отправлена!');
+      saveCart([]); closeCart();
+    } else {
+      alert('Telegram не настроен в shopConfig.json');
+    }
+  }catch(e){ alert('Ошибка отправки'); console.error(e); }
+}
+ 
+async function init(){
+  initTheme(); cartUI();
+  const cfg=await loadConfig(); renderHeader(cfg); renderFooter(cfg);
+  const params=new URLSearchParams(location.search); const slug=params.get('slug');
+  const p=(cfg.products||[]).find(x=> (x.slug||slugify(x.title))===slug);
+  if(!p){ document.getElementById('view').innerHTML='<div class="pad">Товар не найден.</div>'; return; }
+  document.getElementById('img').src=p.img; document.getElementById('title').textContent=p.title;
+  document.getElementById('tag').textContent=p.tag||''; document.getElementById('price').textContent=money(p.price);
+  document.getElementById('desc').textContent=p.desc||'';
+  document.getElementById('add').onclick=()=>{ const q=Math.max(1, parseInt(document.getElementById('qty').value||'1')); addToCart({title:p.title, price:p.price, img:p.img, qty:q}); };
+  document.getElementById('share').onclick=(e)=>{ e.preventDefault(); const u=location.href; navigator.clipboard.writeText(u); alert('Ссылка скопирована'); };
+}
 </script>
-</body>
-</html>
+</body></html>

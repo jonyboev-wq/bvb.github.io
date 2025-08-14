@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="ru"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BVB — Админка</title>
+<title>BVB — Оптовая заявка</title>
 <link rel="icon" href="logo.png">
 <style>
 :root{
@@ -65,51 +65,35 @@ footer{border-top:1px solid var(--border);margin-top:24px}
 }
 @media(max-width:860px){ .p-wrap{grid-template-columns:1fr} .product{grid-column:span 12} }
 
-.panel{display:grid;gap:14px}
-.block{border:1px dashed var(--border);border-radius:16px;padding:16px;background:var(--bg2)}
-label small{color:var(--muted)}
-input,textarea{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--bg2);color:var(--text)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.product-edit{display:grid;gap:8px;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+form{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input,textarea,select{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--bg2);color:var(--text)}
+textarea{min-height:140px}
+@media(max-width:760px){.row{grid-template-columns:1fr}}
 </style>
 </head><body onload="init()">
 <header><div class="container nav"></div></header>
 <main class="container">
-  <div class="panel">
-    <div class="block">
-      <h3>Доступ</h3>
-      <div id="guard">
-        <input id="pass" type="password" placeholder="Пароль администратора">
-        <button class="btn primary" id="login">Войти</button>
-        <div class="small">Пароль задаётся в shopConfig.json → <code>admin.password</code>. Ключ сохраняется в sessionStorage.</div>
+  <div class="card pad">
+    <h3>Оптовая заявка</h3>
+    <form id="f">
+      <div class="row">
+        <input name="name" required placeholder="Ваше имя">
+        <input name="email" type="email" required placeholder="Email для связи">
       </div>
-      <div id="ok" style="display:none" class="small">Доступ разрешён.</div>
-    </div>
-
-    <div class="block">
-      <h3>Магазин</h3>
-      <div class="grid2">
-        <label>Название<input id="name"></label>
-        <label>Слоган<input id="tag"></label>
-        <label>Email<input id="email"></label>
-        <label>Телефон<input id="phone"></label>
+      <div class="row">
+        <input name="phone" required placeholder="Телефон">
+        <input name="company" placeholder="Компания (опционально)">
       </div>
-      <div style="margin-top:8px">
-        <button class="btn primary" id="save-meta">Сохранить</button>
-        <button class="btn" id="export">Экспорт JSON</button>
-        <label class="btn"><input type="file" id="import" style="display:none">Импорт JSON</label>
-      </div>
-    </div>
-
-    <div class="block">
-      <h3>Товары</h3>
-      <div id="prod-list"></div>
-      <button class="btn" id="add">Добавить товар</button>
-    </div>
+      <textarea name="message" required placeholder="Товар, объём и сроки"></textarea>
+      <button class="btn primary">Отправить</button>
+      <div id="status" class="small"></div>
+    </form>
   </div>
 </main>
 <footer><div class="container pad"></div></footer>
-
+<a id="admin-fab" class="btn" href="admin.html">⚙️</a>
+<div id="cart"></div>
 <script>
 const LS_KEY='bvb_cart'; const CFG_KEY='bvb_cfg_override'; 
 function money(n){ n = Number(n||0); return n.toLocaleString('ru-RU')+' ₽'; }
@@ -233,46 +217,18 @@ async function sendOrder(){
     }
   }catch(e){ alert('Ошибка отправки'); console.error(e); }
 }
-
-let CFG;
-function ensureAuth(){ const k=sessionStorage.getItem('bvb_admin'); return k==='ok'; }
-function askAuth(){ const p=document.getElementById('pass').value; if(p && CFG.admin && p===CFG.admin.password){ sessionStorage.setItem('bvb_admin','ok'); return true;} return false; }
-function guardUI(){ const g=document.getElementById('guard'); const ok=document.getElementById('ok'); if(ensureAuth()){ g.style.display='none'; ok.style.display='block'; enableControls(true);} else {enableControls(false);} }
-function enableControls(on){ document.querySelectorAll('input,textarea,button').forEach(el=>{ if(el.id==='login'||el.id==='pass') return; el.disabled=!on; }); }
-function prodItem(p,idx){
-  const box=document.createElement('div'); box.className='product-edit';
-  box.innerHTML=`
-    <div class="grid2">
-      <label>Название<input data-k="title" value="${p.title||''}"></label>
-      <label>Цена (число)<input data-k="price" type="number" value="${p.price||0}"></label>
-    </div>
-    <div class="grid2">
-      <label>Тег<input data-k="tag" value="${p.tag||''}"></label>
-      <label>Slug<input data-k="slug" value="${p.slug||slugify(p.title||'')}"></label>
-    </div>
-    <label>Изображение URL<input data-k="img" value="${p.img||''}"></label>
-    <label>Описание<textarea data-k="desc">${p.desc||''}</textarea></label>
-    <div>
-      <button class="btn" data-act="save">Сохранить</button>
-      <button class="btn" data-act="del">Удалить</button>
-    </div>`;
-  box.querySelectorAll('[data-k]').forEach(inp=>inp.oninput=()=>{ p[inp.dataset.k]=inp.value; });
-  box.querySelector('[data-act="save"]').onclick=()=>saveProducts();
-  box.querySelector('[data-act="del"]').onclick=()=>{ CFG.products.splice(idx,1); renderProds(); saveProducts(); };
-  return box;
-}
-function renderProds(){ const wrap=document.getElementById('prod-list'); wrap.innerHTML=''; (CFG.products||[]).forEach((p,i)=>wrap.appendChild(prodItem(p,i))); }
-function saveMeta(){ storeOverride({ name:document.getElementById('name').value, tag:document.getElementById('tag').value, email:document.getElementById('email').value, phone:document.getElementById('phone').value }); }
-function saveProducts(){ storeOverride({ products: CFG.products }); }
-function storeOverride(part){ const cur=JSON.parse(localStorage.getItem('bvb_cfg_override')||'{}'); const next={...cur, ...part}; localStorage.setItem('bvb_cfg_override', JSON.stringify(next)); alert('Сохранено в браузере. Чтобы сделать постоянным — обновите shopConfig.json в репозитории.'); }
-async function init(){ initTheme(); CFG=await loadConfig(); renderHeader(CFG,'admin'); renderFooter(CFG); 
-  document.getElementById('name').value=CFG.name||''; document.getElementById('tag').value=CFG.tag||''; document.getElementById('email').value=CFG.email||''; document.getElementById('phone').value=CFG.phone||'';
-  document.getElementById('save-meta').onclick=saveMeta;
-  document.getElementById('add').onclick=()=>{ (CFG.products=CFG.products||[]).push({title:'Новый товар',price:0,tag:'',img:'',desc:'',slug:''}); renderProds(); };
-  document.getElementById('export').onclick=()=>{ const blob=new Blob([JSON.stringify(CFG,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='shopConfig.json'; a.click(); };
-  document.getElementById('import').onchange=(e)=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ const obj=JSON.parse(r.result); localStorage.setItem('bvb_cfg_override', JSON.stringify(obj)); alert('Импортировано в браузер. Обновите страницу.'); location.reload(); }catch(_){ alert('Неверный JSON'); }}; r.readAsText(f); };
-  document.getElementById('login').onclick=()=>{ if(askAuth()) guardUI(); else alert('Неверный пароль'); };
-  guardUI(); renderProds();
+ 
+async function init(){ initTheme(); cartUI(); const cfg=await loadConfig(); renderHeader(cfg,'opt'); renderFooter(cfg); 
+  const f=document.getElementById('f'); const st=document.getElementById('status');
+  f.onsubmit=async (e)=>{ e.preventDefault(); st.textContent='Отправляем...'; 
+    const data=Object.fromEntries(new FormData(f).entries());
+    const text = `<b>Оптовая заявка</b>\nИмя: ${data.name}\nEmail: ${data.email}\nТелефон: ${data.phone}\nКомпания: ${data.company||'-'}\n\nСообщение:\n${data.message}`;
+    try{ const cfg=await loadConfig(); if(cfg.telegram && cfg.telegram.token && cfg.telegram.chat_id){
+      await fetch(`https://api.telegram.org/bot${cfg.telegram.token}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:cfg.telegram.chat_id,text,parse_mode:'HTML'})});
+      st.textContent='Готово! Заявка отправлена.'; f.reset();
+    }else{ st.textContent='Telegram не настроен в shopConfig.json'; }
+    }catch(err){ console.error(err); st.textContent='Ошибка отправки'; }
+  };
 }
 </script>
 </body></html>
