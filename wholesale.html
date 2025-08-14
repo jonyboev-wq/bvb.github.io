@@ -1,126 +1,106 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BVB — Оптовая заявка</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Оптовая заявка — BVB</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" href="favicon.ico">
 </head>
 <body>
-  <header class="header">
-    <div class="container nav">
-      <div class="brand">
-        <img src="icon.png" class="logo" alt="BVB">
-        <div>
-          <h1 class="title">BVB</h1>
-          <div class="badge">Официальная страница магазина</div>
-        </div>
-      </div>
-      <div class="nav-actions">
-        <a class="btn ghost" href="index.html#catalog">Каталог</a>
-        <a class="btn primary" href="wholesale.html">Опт</a>
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="brand-logo">BVB</div>
+      <div>
+        <h1>BVB</h1>
+        <small>Официальная страница магазина</small>
       </div>
     </div>
-  </header>
+    <div class="nav-actions">
+      <a class="btn" href="index.html">Каталог</a>
+      <a class="btn primary" href="wholesale.html">Опт</a>
+      <button class="btn icon" id="themeToggle" aria-label="Переключить тему">🌙</button>
+    </div>
+  </div>
+</header>
 
-  <main class="container">
-    <section class="section">
-      <h2 style="margin:6px 0 4px">Оптовая заявка</h2>
-      <p class="badge">Заполните форму — мы свяжемся с вами и пришлём предложение по оптовой партии.</p>
-      <div class="form-card">
-        <form id="wholesale-form">
-          <div class="grid-2">
-            <label>Ваше имя
-              <input name="name" placeholder="Иван Иванов" required>
-            </label>
-            <label>Телефон
-              <input name="phone" placeholder="+7 ..." required>
-            </label>
-          </div>
-          <div class="grid-2">
-            <label>Email
-              <input type="email" name="email" placeholder="you@example.com" required>
-            </label>
-            <label>Компания (опционально)
-              <input name="company" placeholder="ООО “Пример”">
-            </label>
-          </div>
-          <label>Товар и объём
-            <textarea name="message" placeholder="Например: Арт. 123, 200 шт. Срок поставки — до 15 сентября." required></textarea>
-          </label>
+<main class="container">
+  <section class="hero">
+    <h2>Оптовая заявка</h2>
+    <p>Заполните форму — мы свяжемся с вами в ближайшее время с предложением по оптовой партии.</p>
+  </section>
 
-          <div class="grid-2">
-            <label>Город/регион
-              <input name="location" placeholder="Москва">
-            </label>
-            <label>Способ связи
-              <select name="preferred">
-                <option value="phone">Телефон</option>
-                <option value="email">Email</option>
-                <option value="messenger">Мессенджер</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="grid-2">
-            <button class="btn primary" type="submit">Отправить</button>
-            <a class="btn ghost" href="index.html">Назад на главную</a>
-          </div>
-          <div id="form-status" class="badge" style="margin-top:8px"></div>
-        </form>
+  <section class="card" style="padding:16px">
+    <form id="f">
+      <div class="row2">
+        <label>Ваше имя<input required name="name" placeholder="Иван Иванов"></label>
+        <label>Телефон<input required name="phone" placeholder="+7 ..."></label>
       </div>
-    </section>
-  </main>
+      <div class="row2">
+        <label>Email<input type="email" name="email" placeholder="you@example.com"></label>
+        <label>Компания (опционально)<input name="company" placeholder="ООО «Пример»"></label>
+      </div>
+      <label>Товар и объём<textarea required name="message" placeholder="Например: Арт. 123, 200 шт. Срок поставки — до 15 сентября."></textarea></label>
+      <button class="btn primary" type="submit">Отправить</button>
+      <span id="status" class="badge" style="margin-left:8px">Статус: готово</span>
+    </form>
+  </section>
+</main>
 
-  <footer class="container footer"><div>© <span id="year"></span> BVB</div></footer>
+<footer class="container">© <span id="year"></span> BVB</footer>
 
-  <script>
-    // Год
-    document.getElementById('year').textContent = new Date().getFullYear();
+<script>
+// Theme
+(function(){
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const b = document.getElementById('themeToggle');
+  b.textContent = saved === 'dark' ? '☀️' : '🌙';
+  b.addEventListener('click',()=>{
+    const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', cur);
+    localStorage.setItem('theme', cur);
+    b.textContent = cur === 'dark' ? '☀️' : '🌙';
+  });
+})();
 
-    // Telegram отправка (на основе ваших данных)
-    const TG = {
-      token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
-      chat_id: 5223524937
-    };
+document.getElementById('year').textContent=new Date().getFullYear();
 
-    async function tgSend(text) {
-      const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: TG.chat_id, text, parse_mode: "HTML" })
-      });
-      if (!res.ok) throw new Error(await res.text());
-      return res.json();
-    }
+// Telegram sending
+const TG = {
+  token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
+  chat_id: 5223524937
+};
 
-    const form = document.getElementById('wholesale-form');
-    const statusEl = document.getElementById('form-status');
+async function tgSend(text){
+  const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({chat_id: TG.chat_id, text, parse_mode:"HTML"})
+  });
+  if(!res.ok){
+    throw new Error(await res.text());
+  }
+}
 
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      const fd = new FormData(form);
-      const payload = {
-        name: fd.get('name'),
-        phone: fd.get('phone'),
-        email: fd.get('email'),
-        company: fd.get('company') || '—',
-        message: fd.get('message'),
-        location: fd.get('location') || '—',
-        preferred: fd.get('preferred')
-      };
-      const text = `<b>Оптовая заявка</b>\nИмя: ${payload.name}\nТелефон: ${payload.phone}\nEmail: ${payload.email}\nКомпания: ${payload.company}\nГород: ${payload.location}\nСвязь: ${payload.preferred}\n\nСообщение:\n${payload.message}`;
-
-      statusEl.textContent = 'Отправляем...';
-      try{
-        await tgSend(text);
-        statusEl.textContent = 'Готово! Мы получили вашу заявку.';
-        form.reset();
-      }catch(err){
-        console.error(err);
-        statusEl.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
-      }
-    });
-  </script>
+const form = document.getElementById('f');
+const statusEl = document.getElementById('status');
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  statusEl.textContent = 'Отправляем...';
+  const d = new FormData(form);
+  const text = `<b>Оптовая заявка</b>\nИмя: ${d.get('name')}\nТелефон: ${d.get('phone')}\nEmail: ${d.get('email')||'-'}\nКомпания: ${d.get('company')||'-'}\nСообщение: ${d.get('message')}`;
+  try{
+    await tgSend(text);
+    statusEl.textContent = 'Отправлено ✓';
+    form.reset();
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = 'Ошибка отправки';
+    alert('Не удалось отправить в Telegram. Проверьте соединение или позже попробуйте ещё раз.');
+  }
+});
+</script>
 </body>
 </html>

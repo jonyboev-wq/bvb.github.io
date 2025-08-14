@@ -1,0 +1,44 @@
+{
+  "socials": [
+    {
+      "label": "Avito",
+      "url": "https://www.avito.ru/",
+      "icon": "avito"
+    },
+    {
+      "label": "Telegram",
+      "url": "https://t.me/bvbvbabab",
+      "icon": "tg"
+    },
+    {
+      "label": "WhatsApp",
+      "url": "https://wa.me/79831289090",
+      "icon": "wa"
+    }
+  ],
+  "products": [
+    {
+      "title": "Лыжные скрепки Fischer",
+      "slug": "fischer-clips",
+      "price": 99,
+      "tag": "Хит продаж",
+      "desc": "Прочные скрепки для лыж Fischer. Подходят для транспортировки и хранения.",
+      "avitoUrl": "https://www.avito.ru/",
+      "images": [
+        "https://raw.githubusercontent.com/jonyboev-wq/bvb.github.io/main/IMG_3280.jpeg",
+        "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop"
+      ]
+    },
+    {
+      "title": "Рюкзак городской",
+      "slug": "urban-backpack",
+      "price": 2990,
+      "tag": "Новинка",
+      "desc": "Лёгкий, износостойкий материал, отделение для ноутбука 15”.",
+      "avitoUrl": "https://www.avito.ru/",
+      "images": [
+        "https://images.unsplash.com/photo-1523419409543-a7cbe5c0f7d4?q=80&w=1600&auto=format&fit=crop"
+      ]
+    }
+  ]
+}

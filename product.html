@@ -1,85 +1,133 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Товар — BVB</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Товар — BVB</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" href="favicon.ico">
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <div class="brand">
-        <a class="logo" href="./"><img src="logo.png" alt="BVB logo"></a>
-        <div class="titles">
-          <h1>BVB</h1>
-          <p>Официальная страница магазина</p>
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="brand-logo">BVB</div>
+      <div>
+        <h1>BVB</h1>
+        <small>Официальная страница магазина</small>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a class="btn" href="index.html">Каталог</a>
+      <a class="btn" href="wholesale.html">Опт</a>
+      <button class="btn icon" id="themeToggle" aria-label="Переключить тему">🌙</button>
+    </div>
+  </div>
+</header>
+
+<main class="container p-wrap">
+  <a class="btn small" href="index.html">← Назад к каталогу</a>
+  <div id="content" class="p-hero"></div>
+</main>
+
+<footer class="container">© <span id="year"></span> BVB</footer>
+
+<script>
+// Theme toggle
+(function(){
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const b = document.getElementById('themeToggle');
+  b.textContent = saved === 'dark' ? '☀️' : '🌙';
+  b.addEventListener('click',()=>{
+    const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', cur);
+    localStorage.setItem('theme', cur);
+    b.textContent = cur === 'dark' ? '☀️' : '🌙';
+  });
+})();
+
+const FALLBACK = {
+  products:[
+    {
+      title:"Лыжные скрепки Fischer",
+      slug:"fischer-clips",
+      price:99,
+      tag:"Хит продаж",
+      desc:"Прочные скрепки для лыж Fischer.",
+      avitoUrl:"https://www.avito.ru/",
+      images:[
+        "https://raw.githubusercontent.com/jonyboev-wq/bvb.github.io/main/IMG_3280.jpeg",
+        "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop"
+      ]
+    }
+  ]
+};
+
+function qs(name){
+  const u = new URL(location.href);
+  return u.searchParams.get(name) || '';
+}
+async function loadConfig(){
+  try{
+    const res = await fetch('shopConfig.json',{cache:'no-store'});
+    if(!res.ok) throw new Error('no file');
+    return await res.json();
+  }catch(e){ return FALLBACK; }
+}
+function rubl(n){ try{ return new Intl.NumberFormat('ru-RU').format(n) + ' ₽'; }catch(_){ return n + ' ₽'; } }
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+
+function renderProduct(p){
+  const target=document.getElementById('content'); target.innerHTML='';
+  const main = (p.images&&p.images[0])||'';
+  const view = el(`
+    <>
+      <div>
+        <img id="pMain" class="p-main" src="${main}" alt="${p.title}">
+        <div class="p-thumbs" id="thumbs"></div>
+      </div>
+      <div>
+        <h2 class="p-title">${p.title}</h2>
+        ${p.tag? `<div class="badge" style="margin:8px 0 6px">${p.tag}</div>`:''}
+        <div class="price" style="font-size:20px">${rubl(p.price)}</div>
+        <p class="p-desc">${p.desc||''}</p>
+        <div class="p-buttons">
+          <a class="btn primary" target="_blank" rel="noopener" href="${p.avitoUrl||'#'}">Открыть на Avito</a>
+          <a class="btn" href="wholesale.html">Оптовая заявка</a>
         </div>
       </div>
-      <div class="actions">
-        <a class="btn ghost" href="./">Каталог</a>
-        <a class="btn ghost" href="wholesale.html">Опт</a>
-        <button id="theme-toggle" class="btn icon" aria-label="Сменить тему"></button>
-      </div>
-    </div>
-  </header>
+    </>
+  `);
+  // Because fragments aren't supported in el(), append children
+  target.appendChild(view.children[0]);
+  target.appendChild(view.children[0]);
 
-  <main class="container" id="main">
-    <a class="btn ghost" href="./">← Назад к каталогу</a>
-    <div class="grid" style="grid-template-columns: 1.2fr 1fr; align-items:start; margin-top:12px" id="view">
-      <!-- left: gallery, right: info -->
-    </div>
-  </main>
-
-  <footer class="container"><div>© <span id="year"></span> BVB</div></footer>
-
-<script type="module">
-  import { loadConfig, $, $$, slugify, initTheme, icon } from './common.js';
-  initTheme();
-
-  function qs(name){
-    const u = new URL(location.href);
-    return u.searchParams.get(name)||'';
-  }
-
-  const cfg = await loadConfig();
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  const slug = qs('slug');
-  const prod = (cfg.products||[]).find(p=>p.slug===slug);
-  const view = $('#view');
-  if(!prod){ view.innerHTML = '<div>Товар не найден.</div>'; throw 0; }
-
-  const photos = prod.photos||[];
-  const first = photos[0]||'';
-
-  view.innerHTML = `
-    <div class="gallery">
-      <div class="main"><img id="main-photo" src="${first}" alt="${prod.title}"></div>
-      <div class="thumbs" id="thumbs">
-        ${photos.map((src,i)=>`<img src="${src}" data-i="${i}" class="${i===0?'active':''}">`).join('')}
-      </div>
-    </div>
-    <div class="card pad">
-      <h2 style="margin-top:0">${prod.title}</h2>
-      ${prod.tag?`<div class="tag" style="margin:6px 0 10px">${prod.tag}</div>`:''}
-      <div class="price" style="font-size:18px;margin:8px 0">${prod.price||''}</div>
-      <p class="desc">${prod.desc||''}</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-        ${prod.avito ? `<a class="btn primary" href="${prod.avito}" target="_blank" rel="noopener">Открыть на Avito</a>`:''}
-        <a class="btn" href="wholesale.html?slug=${encodeURIComponent(prod.slug)}">Оптовая заявка</a>
-      </div>
-    </div>
-  `;
-
-  $('#thumbs').addEventListener('click', (e)=>{
-    const img = e.target.closest('img');
-    if(!img) return;
-    $$('#thumbs img').forEach(i=>i.classList.remove('active'));
-    img.classList.add('active');
-    $('#main-photo').src = img.src;
+  const thumbs=document.getElementById('thumbs');
+  (p.images||[]).forEach((src,i)=>{
+    const im = document.createElement('img');
+    im.src = src; im.alt = p.title + ' ' + (i+1);
+    if(i===0) im.classList.add('active');
+    im.addEventListener('click',()=>{
+      document.getElementById('pMain').src = src;
+      [...thumbs.children].forEach(c=>c.classList.remove('active'));
+      im.classList.add('active');
+    });
+    thumbs.appendChild(im);
   });
+}
+
+(async function init(){
+  const slug = qs('slug');
+  const cfg = await loadConfig();
+  const p = (cfg.products||[]).find(x => (x.slug||'').toLowerCase() === (slug||'').toLowerCase());
+  if(!p){
+    document.getElementById('content').innerHTML = '<p>Товар не найден.</p>';
+  }else{
+    renderProduct(p);
+  }
+  document.getElementById('year').textContent = new Date().getFullYear();
+})();
 </script>
 </body>
 </html>

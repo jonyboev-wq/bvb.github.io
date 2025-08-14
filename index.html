@@ -1,85 +1,159 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BVB — официальный магазин</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BVB — официальный магазин</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" href="favicon.ico">
+<meta name="description" content="Каталог товаров BVB. Официальная страница магазина." />
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <div class="brand">
-        <a class="logo" href="./"><img src="logo.png" alt="BVB logo"></a>
-        <div class="titles">
-          <h1 id="b-name">BVB</h1>
-          <p id="b-tag">Официальная страница магазина</p>
-        </div>
-      </div>
-      <div class="actions">
-        <a class="btn ghost" href="./#catalog">Каталог</a>
-        <a class="btn ghost" href="wholesale.html">Опт</a>
-        <button id="theme-toggle" class="btn icon" aria-label="Сменить тему"></button>
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <div class="brand-logo">BVB</div>
+      <div>
+        <h1>BVB</h1>
+        <small>Официальная страница магазина</small>
       </div>
     </div>
-  </header>
+    <div class="nav-actions">
+      <a class="btn" href="index.html#catalog">Каталог</a>
+      <a class="btn" href="wholesale.html">Опт</a>
+      <button class="btn icon" id="themeToggle" aria-label="Переключить тему">🌙</button>
+    </div>
+  </div>
+</header>
 
-  <main class="container">
-    <section class="hero">
-      <h2 class="title">Лучшие товары по честным ценам</h2>
-      <p class="subtitle">Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
-      <div class="socials" id="socials"></div>
-    </section>
+<main class="container">
+  <section class="hero">
+    <h2>Лучшие товары по честным ценам</h2>
+    <p>Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
+  </section>
 
-    <section id="catalog">
-      <div class="grid" id="grid"></div>
-    </section>
-  </main>
+  <section class="socials" id="socials">
+    <!-- icons will be injected -->
+  </section>
 
-  <footer class="container">
-    <div>© <span id="year"></span> BVB. Все права защищены.</div>
-  </footer>
+  <section id="catalog">
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
 
-<script type="module">
-  import { loadConfig, $, icon, initTheme, slugify } from './common.js';
+<footer class="container">
+  © <span id="year"></span> BVB. Все права защищены.
+</footer>
 
-  initTheme();
-
-  function productCard(p){
-    const photo = (p.photos && p.photos[0]) || '';
-    return `
-      <a class="card product-card" href="product.html?slug=${encodeURIComponent(p.slug)}">
-        <div class="img-wrap"><img src="${photo}" alt="${p.title}"></div>
-        <div class="pad">
-          <h3>${p.title}</h3>
-          ${p.tag ? `<div class="tag">${p.tag}</div>`: ''}
-          <p class="desc">${p.desc||''}</p>
-          <div class="row">
-            <div class="price">${p.price||''}</div>
-            ${p.avito ? `<a class="btn" href="${p.avito}" target="_blank" rel="noopener">Avito</a>`:''}
-          </div>
-        </div>
-      </a>`;
-  }
-
-  const cfg = await loadConfig();
-  $('#b-name').textContent = cfg.name || 'BVB';
-  $('#b-tag').textContent = cfg.tag || 'Официальная страница магазина';
-  $('#year').textContent = new Date().getFullYear();
-
-  const socials = $('#socials');
-  socials.innerHTML = '';
-  (cfg.socials||[]).forEach(s=>{
-    const a = document.createElement('a');
-    a.className = 'btn';
-    a.href = s.url; a.target = '_blank'; a.rel = 'noopener';
-    a.innerHTML = icon(s.icon) + '<span>'+s.label+'</span>';
-    socials.appendChild(a);
+<script>
+// ===== Theme =====
+(function(){
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const b = document.getElementById('themeToggle');
+  b.textContent = saved === 'dark' ? '☀️' : '🌙';
+  b.addEventListener('click',()=>{
+    const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', cur);
+    localStorage.setItem('theme', cur);
+    b.textContent = cur === 'dark' ? '☀️' : '🌙';
   });
+})();
 
-  const grid = $('#grid');
-  grid.innerHTML = (cfg.products||[]).map(productCard).join('');
+// ===== Icons =====
+const ICONS = {
+  avito: `<svg class="icon-soc" viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="7" r="3"/><circle cx="16" cy="6" r="2"/><circle cx="18" cy="14" r="3"/><circle cx="8" cy="17" r="2.5"/></svg>`,
+  tg: `<svg class="icon-soc" viewBox="0 0 24 24" fill="currentColor"><path d="M9.036 15.47l-.38 5.36c.54 0 .78-.23 1.06-.51l2.54-2.43 5.25 3.84c.97.53 1.66.25 1.93-.89l3.47-16.27c.31-1.44-.52-2-1.46-1.65L1.05 9.22C-.35 9.78-.33 10.62.81 10.98l5.2 1.62L19.38 5.2c.62-.4 1.18-.18.72.22"/></svg>`,
+  wa: `<svg class="icon-soc" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.9A10 10 0 004 18.6L3 22l3.5-.9A10 10 0 1019.9 4L20 3.9zm-8 16a8 8 0 110-16 8 8 0 010 16z"/></svg>`
+};
+
+// ===== Data load with fallback =====
+const FALLBACK = {
+  socials:[
+    {label:"Avito", url:"https://www.avito.ru/", icon:"avito"},
+    {label:"Telegram", url:"https://t.me/bvbvbabab", icon:"tg"},
+    {label:"WhatsApp", url:"https://wa.me/79831289090", icon:"wa"}
+  ],
+  products:[
+    {
+      title:"Лыжные скрепки Fischer",
+      slug:"fischer-clips",
+      price:99,
+      tag:"Хит продаж",
+      desc:"Прочные скрепки для лыж Fischer.",
+      avitoUrl:"https://www.avito.ru/",
+      images:[
+        "https://raw.githubusercontent.com/jonyboev-wq/bvb.github.io/main/IMG_3280.jpeg",
+        "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop"
+      ]
+    },
+    {
+      title:"Рюкзак городской",
+      slug:"urban-backpack",
+      price:2990,
+      tag:"Новинка",
+      desc:"Лёгкий, износостойкий материал, отделение 15”.",
+      avitoUrl:"https://www.avito.ru/",
+      images:[
+        "https://images.unsplash.com/photo-1523419409543-a7cbe5c0f7d4?q=80&w=1600&auto=format&fit=crop"
+      ]
+    }
+  ]
+};
+
+async function loadConfig(){
+  try{
+    const res = await fetch('shopConfig.json',{cache:'no-store'});
+    if(!res.ok) throw new Error('no file');
+    const data = await res.json();
+    return data;
+  }catch(e){
+    return FALLBACK;
+  }
+}
+
+function rubl(n){ try{ return new Intl.NumberFormat('ru-RU').format(n) + ' ₽'; }catch(_){ return n + ' ₽'; } }
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function slugify(s){ return (s||'').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,''); }
+
+function renderSocials(items){
+  const wrap=document.getElementById('socials'); wrap.innerHTML='';
+  items.forEach(s=>{
+    const button=el(`<a class="btn small" target="_blank" rel="noopener">${ICONS[s.icon]||''}<span>${s.label}</span></a>`);
+    button.href=s.url; wrap.appendChild(button);
+  });
+}
+
+function renderGrid(items){
+  const grid=document.getElementById('grid'); grid.innerHTML='';
+  items.forEach(p=>{
+    const card=el(`
+      <article class="card">
+        <a href="product.html?slug=${encodeURIComponent(p.slug || slugify(p.title))}">
+          <img class="card-img" src="${(p.images&&p.images[0])||''}" alt="${p.title}" loading="lazy">
+          <div class="card-pad">
+            <h3 style="margin:0 0 6px">${p.title}</h3>
+            ${p.tag? `<div class="badge">${p.tag}</div>`:''}
+            <p class="card-pad" style="padding:8px 0 0;margin:0;color:var(--muted)">${p.desc||''}</p>
+            <div class="price">${rubl(p.price)}</div>
+          </div>
+        </a>
+        <div class="card-actions">
+          <a class="btn small" target="_blank" rel="noopener" href="${p.avitoUrl||'#'}">Avito</a>
+          <a class="btn small primary" href="product.html?slug=${encodeURIComponent(p.slug || slugify(p.title))}">Подробнее</a>
+        </div>
+      </article>
+    `);
+    grid.appendChild(card);
+  });
+}
+
+(async function init(){
+  const cfg = await loadConfig();
+  renderSocials(cfg.socials||[]);
+  renderGrid(cfg.products||[]);
+  document.getElementById('year').textContent=new Date().getFullYear();
+})();
 </script>
 </body>
 </html>
