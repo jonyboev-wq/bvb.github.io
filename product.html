@@ -1,81 +1,85 @@
 
-<!DOCTYPE html><html lang="ru">
+<!doctype html>
+<html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Товар — BVB</title>
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="logo.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Товар — BVB</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div class="container nav">
-    <div class="brand">
-      <div class="brand-logo"><img src="logo.png" alt="BVB"></div>
-      <div><strong>BVB</strong><div class="badge">Карточка товара</div></div>
-    </div>
-    <div class="actions">
-      <a class="btn ghost" href="index.html#catalog">Каталог</a>
-      <a class="btn ghost" href="wholesale.html">Опт</a>
-      <button id="theme-toggle" class="btn icon-only" aria-label="Тема"></button>
-    </div>
-  </div>
-</header>
-
-<main class="container section">
-  <div id="content"></div>
-</main>
-
-<footer class="container"><div class="small">© BVB.</div></footer>
-
-<script src="common.js"></script>
-<script>
-(async function(){
-  const params = new URLSearchParams(location.search);
-  const slug = params.get('slug');
-  const config = await loadConfig();
-  const product = (config.products || []).find(p => (p.slug||slugify(p.title)) === slug);
-  const host = document.getElementById('content');
-
-  if(!product){
-    host.innerHTML = '<div class="badge">Товар не найден. <a href="index.html">Вернуться</a></div>';
-    return;
-  }
-
-  const photos = product.photos && product.photos.length ? product.photos : ['https://via.placeholder.com/1000x600?text=Фото'];
-  host.innerHTML = `
-    <div class="grid">
-      <div class="card pad" style="grid-column: span 7">
-        <div class="gallery">
-          <img id="mainPhoto" class="gallery-main" src="${photos[0]}" alt="${product.title}">
-          <div class="thumbs" id="thumbs"></div>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <a class="logo" href="./"><img src="logo.png" alt="BVB logo"></a>
+        <div class="titles">
+          <h1>BVB</h1>
+          <p>Официальная страница магазина</p>
         </div>
       </div>
-      <div class="card pad" style="grid-column: span 5">
-        <h1 style="margin:0">${product.title}</h1>
-        ${product.tag ? `<div class="tag" style="margin:6px 0 10px">${product.tag}</div>`:''}
-        <div class="price">${product.price||''}</div>
-        <p class="badge" style="margin:10px 0">${product.desc||''}</p>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
-          ${product.avito ? `<a class="btn" href="${product.avito}" target="_blank" rel="noopener">Открыть на Avito</a>`:''}
-          <a class="btn" href="wholesale.html?slug=${encodeURIComponent(product.slug||slug)}">Оптовая заявка</a>
-          <a class="btn ghost" href="index.html#catalog">← Назад</a>
-        </div>
+      <div class="actions">
+        <a class="btn ghost" href="./">Каталог</a>
+        <a class="btn ghost" href="wholesale.html">Опт</a>
+        <button id="theme-toggle" class="btn icon" aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="main">
+    <a class="btn ghost" href="./">← Назад к каталогу</a>
+    <div class="grid" style="grid-template-columns: 1.2fr 1fr; align-items:start; margin-top:12px" id="view">
+      <!-- left: gallery, right: info -->
+    </div>
+  </main>
+
+  <footer class="container"><div>© <span id="year"></span> BVB</div></footer>
+
+<script type="module">
+  import { loadConfig, $, $$, slugify, initTheme, icon } from './common.js';
+  initTheme();
+
+  function qs(name){
+    const u = new URL(location.href);
+    return u.searchParams.get(name)||'';
+  }
+
+  const cfg = await loadConfig();
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const slug = qs('slug');
+  const prod = (cfg.products||[]).find(p=>p.slug===slug);
+  const view = $('#view');
+  if(!prod){ view.innerHTML = '<div>Товар не найден.</div>'; throw 0; }
+
+  const photos = prod.photos||[];
+  const first = photos[0]||'';
+
+  view.innerHTML = `
+    <div class="gallery">
+      <div class="main"><img id="main-photo" src="${first}" alt="${prod.title}"></div>
+      <div class="thumbs" id="thumbs">
+        ${photos.map((src,i)=>`<img src="${src}" data-i="${i}" class="${i===0?'active':''}">`).join('')}
+      </div>
+    </div>
+    <div class="card pad">
+      <h2 style="margin-top:0">${prod.title}</h2>
+      ${prod.tag?`<div class="tag" style="margin:6px 0 10px">${prod.tag}</div>`:''}
+      <div class="price" style="font-size:18px;margin:8px 0">${prod.price||''}</div>
+      <p class="desc">${prod.desc||''}</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+        ${prod.avito ? `<a class="btn primary" href="${prod.avito}" target="_blank" rel="noopener">Открыть на Avito</a>`:''}
+        <a class="btn" href="wholesale.html?slug=${encodeURIComponent(prod.slug)}">Оптовая заявка</a>
       </div>
     </div>
   `;
 
-  const thumbs = qs('#thumbs');
-  photos.forEach((src, i)=>{
-    const img = new Image();
-    img.src = src; img.alt = product.title + ' ' + (i+1);
-    if(i===0) img.classList.add('active');
-    img.addEventListener('click', ()=>{
-      qs('#mainPhoto').src = src;
-      qsa('.thumbs img').forEach(el=>el.classList.remove('active'));
-      img.classList.add('active');
-    });
-    thumbs.appendChild(img);
+  $('#thumbs').addEventListener('click', (e)=>{
+    const img = e.target.closest('img');
+    if(!img) return;
+    $$('#thumbs img').forEach(i=>i.classList.remove('active'));
+    img.classList.add('active');
+    $('#main-photo').src = img.src;
   });
-})();
 </script>
-</body></html>
+</body>
+</html>

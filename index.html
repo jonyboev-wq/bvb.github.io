@@ -1,92 +1,85 @@
 
-<!DOCTYPE html><html lang="ru">
+<!doctype html>
+<html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BVB — официальный магазин</title>
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="logo.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BVB — официальный магазин</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div class="container nav">
-    <div class="brand">
-      <div class="brand-logo"><img src="logo.png" alt="BVB"></div>
-      <div>
-        <strong>BVB</strong><div class="badge">Официальная страница магазина</div>
-      </div>
-    </div>
-    <div class="actions">
-      <a class="btn ghost" href="index.html#catalog">Каталог</a>
-      <a class="btn ghost" href="wholesale.html">Опт</a>
-      <button id="theme-toggle" class="btn icon-only" aria-label="Тема"></button>
-    </div>
-  </div>
-</header>
-
-<main class="container">
-  <section class="section hero">
-    <h1 class="title">Лучшие товары по честным ценам</h1>
-    <p class="subtitle">Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
-  </section>
-
-  <section class="section">
-    <div id="socials" class="socials-wrap"></div>
-  </section>
-
-  <section id="catalog" class="section">
-    <div id="product-grid" class="grid"></div>
-  </section>
-</main>
-
-<footer class="container"><div class="small">© BVB. Все права защищены.</div></footer>
-
-<script src="common.js"></script>
-<script>
-(async function(){
-  const config = await loadConfig();
-
-  // socials
-  const s = document.getElementById('socials'); s.innerHTML = '';
-  config.socials?.forEach(x=>{
-    const a = document.createElement('a'); a.href = x.url; a.target = '_blank'; a.rel='noopener';
-    a.innerHTML = svgIcon(x.icon) + '<span>'+ x.label +'</span>';
-    s.appendChild(a);
-  });
-
-  // products
-  const grid = document.getElementById('product-grid'); grid.innerHTML = '';
-  if(!config.products || !config.products.length){
-    const empty = document.createElement('div');
-    empty.className = 'badge'; empty.textContent = 'Список товаров пуст. Проверь shopConfig.json';
-    grid.appendChild(empty);
-    return;
-  }
-  config.products.forEach(p=>{
-    const firstImg = (p.photos && p.photos[0]) || 'https://via.placeholder.com/240x240?text=Фото';
-    const slug = p.slug || slugify(p.title);
-    const card = document.createElement('article');
-    card.className = 'card pad pcard';
-    card.innerHTML = `
-      <img class="pcard-img" src="${firstImg}" alt="${p.title}">
-      <div class="meta" style="flex:1">
-        <h3 class="pcard-title">${p.title}</h3>
-        ${p.tag ? `<div class="tag">${p.tag}</div>`:''}
-        <p class="badge" style="margin:6px 0 10px">${p.desc || ''}</p>
-        <div class="price">${p.price || ''}</div>
-        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          ${p.avito ? `<a class="btn" href="${p.avito}" target="_blank" rel="noopener">Открыть на Avito</a>`:''}
-          <a class="btn primary" href="product.html?slug=${encodeURIComponent(slug)}">Подробнее</a>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <a class="logo" href="./"><img src="logo.png" alt="BVB logo"></a>
+        <div class="titles">
+          <h1 id="b-name">BVB</h1>
+          <p id="b-tag">Официальная страница магазина</p>
         </div>
       </div>
-    `;
-    // открытие по клику на всю карточку
-    card.addEventListener('click', (e)=>{
-      // не переопределять если клик по кнопке
-      if(e.target.closest('a')) return;
-      location.href = 'product.html?slug='+encodeURIComponent(slug);
-    });
-    grid.appendChild(card);
+      <div class="actions">
+        <a class="btn ghost" href="./#catalog">Каталог</a>
+        <a class="btn ghost" href="wholesale.html">Опт</a>
+        <button id="theme-toggle" class="btn icon" aria-label="Сменить тему"></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2 class="title">Лучшие товары по честным ценам</h2>
+      <p class="subtitle">Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
+      <div class="socials" id="socials"></div>
+    </section>
+
+    <section id="catalog">
+      <div class="grid" id="grid"></div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div>© <span id="year"></span> BVB. Все права защищены.</div>
+  </footer>
+
+<script type="module">
+  import { loadConfig, $, icon, initTheme, slugify } from './common.js';
+
+  initTheme();
+
+  function productCard(p){
+    const photo = (p.photos && p.photos[0]) || '';
+    return `
+      <a class="card product-card" href="product.html?slug=${encodeURIComponent(p.slug)}">
+        <div class="img-wrap"><img src="${photo}" alt="${p.title}"></div>
+        <div class="pad">
+          <h3>${p.title}</h3>
+          ${p.tag ? `<div class="tag">${p.tag}</div>`: ''}
+          <p class="desc">${p.desc||''}</p>
+          <div class="row">
+            <div class="price">${p.price||''}</div>
+            ${p.avito ? `<a class="btn" href="${p.avito}" target="_blank" rel="noopener">Avito</a>`:''}
+          </div>
+        </div>
+      </a>`;
+  }
+
+  const cfg = await loadConfig();
+  $('#b-name').textContent = cfg.name || 'BVB';
+  $('#b-tag').textContent = cfg.tag || 'Официальная страница магазина';
+  $('#year').textContent = new Date().getFullYear();
+
+  const socials = $('#socials');
+  socials.innerHTML = '';
+  (cfg.socials||[]).forEach(s=>{
+    const a = document.createElement('a');
+    a.className = 'btn';
+    a.href = s.url; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = icon(s.icon) + '<span>'+s.label+'</span>';
+    socials.appendChild(a);
   });
-})();
+
+  const grid = $('#grid');
+  grid.innerHTML = (cfg.products||[]).map(productCard).join('');
 </script>
-</body></html>
+</body>
+</html>

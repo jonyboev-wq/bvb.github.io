@@ -1,50 +1,75 @@
 
-<!DOCTYPE html><html lang="ru">
+<!doctype html>
+<html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Оптовая заявка — BVB</title>
-<link rel="stylesheet" href="style.css">
-<link rel="icon" href="logo.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Оптовая заявка — BVB</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div class="container nav">
-    <div class="brand">
-      <div class="brand-logo"><img src="logo.png" alt="BVB"></div>
-      <div><strong>BVB</strong><div class="badge">Оптовая заявка</div></div>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <a class="logo" href="./"><img src="logo.png" alt="BVB logo"></a>
+        <div class="titles">
+          <h1>BVB</h1>
+          <p>Официальная страница магазина</p>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn ghost" href="./">Каталог</a>
+        <button id="theme-toggle" class="btn icon" aria-label="Сменить тему"></button>
+      </div>
     </div>
-    <div class="actions">
-      <a class="btn ghost" href="index.html#catalog">Каталог</a>
-      <button id="theme-toggle" class="btn icon-only" aria-label="Тема"></button>
-    </div>
-  </div>
-</header>
+  </header>
 
-<main class="container section">
-  <form id="form" class="grid2">
-    <input name="name" placeholder="Ваше имя" required>
-    <input name="phone" placeholder="Телефон" required>
-    <input name="email" placeholder="Email для связи" type="email" required>
-    <input name="company" placeholder="Компания (необязательно)">
-    <input name="product" placeholder="Товар/артикул (если есть)" style="grid-column: span 2">
-    <textarea name="msg" placeholder="Сообщение: объём, условия, сроки" required></textarea>
-    <button class="btn primary" type="submit" style="grid-column: span 2">Отправить в Telegram</button>
-    <div id="status" class="badge" style="grid-column: span 2"></div>
-  </form>
-</main>
+  <main class="container">
+    <h2>Оптовая заявка</h2>
+    <p class="subtitle">Заполните форму — мы свяжемся с вами.</p>
+    <form class="card pad form" id="form">
+      <div class="row2">
+        <label>Ваше имя<input name="name" required placeholder="Иван Иванов"/></label>
+        <label>Телефон<input name="phone" required placeholder="+7 ..."/></label>
+      </div>
+      <div class="row2">
+        <label>Email<input name="email" type="email" required placeholder="you@example.com"/></label>
+        <label>Компания (опционально)<input name="company" placeholder="ООО &quot;Пример&quot;"/></label>
+      </div>
+      <label>Товар и объём<textarea name="message" required placeholder="Например: Арт. 123, 200 шт. Срок поставки — до 15 сентября."></textarea></label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn primary" type="submit">Отправить</button>
+        <a class="btn ghost" href="./">Отмена</a>
+      </div>
+      <div id="status" class="subtitle"></div>
+    </form>
+  </main>
 
-<footer class="container"><div class="small">© BVB.</div></footer>
+  <footer class="container"><div>© <span id="year"></span> BVB</div></footer>
 
-<script src="common.js"></script>
-<script>
-document.getElementById('form').addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const text = `<b>Оптовая заявка</b>\nИмя: ${fd.get('name')}\nТелефон: ${fd.get('phone')}\nEmail: ${fd.get('email')}\nКомпания: ${fd.get('company')||'-'}\nТовар: ${fd.get('product')||'-'}\n\nСообщение:\n${fd.get('msg')}`;
-  document.getElementById('status').textContent='Отправляем...';
-  await tgSend(text);
-  document.getElementById('status').textContent='Готово! Мы свяжемся с вами.';
-  e.target.reset();
-});
+<script type="module">
+  import { loadConfig, $, initTheme, tgSend } from './common.js';
+  initTheme();
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Prefill from slug
+  function qs(name){ const u=new URL(location.href); return u.searchParams.get(name)||''; }
+  const cfg = await loadConfig();
+  const slug = qs('slug');
+  if(slug){
+    const p = (cfg.products||[]).find(x=>x.slug===slug);
+    if(p){ document.querySelector('[name=message]').value = `Товар: ${p.title}\n`; }
+  }
+
+  $('#form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const text = `<b>Оптовая заявка</b>\nИмя: ${fd.get('name')}\nТелефон: ${fd.get('phone')}\nEmail: ${fd.get('email')}\nКомпания: ${fd.get('company')||'-'}\n\n${fd.get('message')}`;
+    $('#status').textContent = 'Отправляем...';
+    await tgSend(text);
+    $('#status').textContent = 'Заявка отправлена! Мы свяжемся с вами.';
+    e.target.reset();
+  });
 </script>
-</body></html>
+</body>
+</html>
