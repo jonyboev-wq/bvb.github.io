@@ -294,28 +294,51 @@ const TG = {
 };
 
 async function tgSend(text) {
-  // === CHECKOUT ЧЕРЕЗ TELEGRAM ===
-function clearCart(){ 
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: TG.chat_id, text, parse_mode: "HTML" })
+    });
+    if (!res.ok) {
+      console.error("Telegram error:", await res.text());
+      alert("Ошибка отправки в Telegram (см. консоль).");
+    }
+  } catch (e) {
+    console.error(e);
+    alert("Сетевая ошибка при отправке в Telegram.");
+  }
+}
+
+/* === CHECKOUT ЧЕРЕЗ TELEGRAM === */
+function clearCart() { 
   cart.length = 0; 
   saveCart(); 
 }
 
-async function checkout(){
-  if(!cart.length){
+async function checkout() {
+  if (!cart.length) {
     alert('Корзина пуста.');
     return;
   }
   const name = prompt('Ваше имя:');
-  if(!name) return;
+  if (!name) return;
   const phone = prompt('Телефон для связи:');
-  if(!phone) return;
+  if (!phone) return;
 
-  const lines = cart.map((it,i)=> `${i+1}. ${it.title} — ${it.price} × ${it.qty}`).join('\n');
+  const lines = cart.map((it,i) => `${i+1}. ${it.title} — ${it.price} × ${it.qty}`).join('\n');
   const text = `<b>Новый заказ</b>\n${lines}\n\nИмя: ${name}\nТелефон: ${phone}`;
   await tgSend(text);
   clearCart();
   alert('Заявка отправлена! Мы свяжемся с вами.');
 }
+
+// Обработка клика по кнопке «Корзина»
+document.getElementById('cart-btn').addEventListener('click', (e) => {
+  e.preventDefault();
+  checkout();
+});
+async function tgSend(text) {
 
 // Перехватываем клик по кнопке «Корзина» в шапке
 document.getElementById('cart-btn').addEventListener('click', (e)=>{
