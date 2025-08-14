@@ -1,75 +1,126 @@
-
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Оптовая заявка — BVB</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BVB — Оптовая заявка</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
+  <header class="header">
     <div class="container nav">
       <div class="brand">
-        <a class="logo" href="./"><img src="logo.png" alt="BVB logo"></a>
-        <div class="titles">
-          <h1>BVB</h1>
-          <p>Официальная страница магазина</p>
+        <img src="icon.png" class="logo" alt="BVB">
+        <div>
+          <h1 class="title">BVB</h1>
+          <div class="badge">Официальная страница магазина</div>
         </div>
       </div>
-      <div class="actions">
-        <a class="btn ghost" href="./">Каталог</a>
-        <button id="theme-toggle" class="btn icon" aria-label="Сменить тему"></button>
+      <div class="nav-actions">
+        <a class="btn ghost" href="index.html#catalog">Каталог</a>
+        <a class="btn primary" href="wholesale.html">Опт</a>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <h2>Оптовая заявка</h2>
-    <p class="subtitle">Заполните форму — мы свяжемся с вами.</p>
-    <form class="card pad form" id="form">
-      <div class="row2">
-        <label>Ваше имя<input name="name" required placeholder="Иван Иванов"/></label>
-        <label>Телефон<input name="phone" required placeholder="+7 ..."/></label>
+    <section class="section">
+      <h2 style="margin:6px 0 4px">Оптовая заявка</h2>
+      <p class="badge">Заполните форму — мы свяжемся с вами и пришлём предложение по оптовой партии.</p>
+      <div class="form-card">
+        <form id="wholesale-form">
+          <div class="grid-2">
+            <label>Ваше имя
+              <input name="name" placeholder="Иван Иванов" required>
+            </label>
+            <label>Телефон
+              <input name="phone" placeholder="+7 ..." required>
+            </label>
+          </div>
+          <div class="grid-2">
+            <label>Email
+              <input type="email" name="email" placeholder="you@example.com" required>
+            </label>
+            <label>Компания (опционально)
+              <input name="company" placeholder="ООО “Пример”">
+            </label>
+          </div>
+          <label>Товар и объём
+            <textarea name="message" placeholder="Например: Арт. 123, 200 шт. Срок поставки — до 15 сентября." required></textarea>
+          </label>
+
+          <div class="grid-2">
+            <label>Город/регион
+              <input name="location" placeholder="Москва">
+            </label>
+            <label>Способ связи
+              <select name="preferred">
+                <option value="phone">Телефон</option>
+                <option value="email">Email</option>
+                <option value="messenger">Мессенджер</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid-2">
+            <button class="btn primary" type="submit">Отправить</button>
+            <a class="btn ghost" href="index.html">Назад на главную</a>
+          </div>
+          <div id="form-status" class="badge" style="margin-top:8px"></div>
+        </form>
       </div>
-      <div class="row2">
-        <label>Email<input name="email" type="email" required placeholder="you@example.com"/></label>
-        <label>Компания (опционально)<input name="company" placeholder="ООО &quot;Пример&quot;"/></label>
-      </div>
-      <label>Товар и объём<textarea name="message" required placeholder="Например: Арт. 123, 200 шт. Срок поставки — до 15 сентября."></textarea></label>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn primary" type="submit">Отправить</button>
-        <a class="btn ghost" href="./">Отмена</a>
-      </div>
-      <div id="status" class="subtitle"></div>
-    </form>
+    </section>
   </main>
 
-  <footer class="container"><div>© <span id="year"></span> BVB</div></footer>
+  <footer class="container footer"><div>© <span id="year"></span> BVB</div></footer>
 
-<script type="module">
-  import { loadConfig, $, initTheme, tgSend } from './common.js';
-  initTheme();
-  document.getElementById('year').textContent = new Date().getFullYear();
+  <script>
+    // Год
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Prefill from slug
-  function qs(name){ const u=new URL(location.href); return u.searchParams.get(name)||''; }
-  const cfg = await loadConfig();
-  const slug = qs('slug');
-  if(slug){
-    const p = (cfg.products||[]).find(x=>x.slug===slug);
-    if(p){ document.querySelector('[name=message]').value = `Товар: ${p.title}\n`; }
-  }
+    // Telegram отправка (на основе ваших данных)
+    const TG = {
+      token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
+      chat_id: 5223524937
+    };
 
-  $('#form').addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    const text = `<b>Оптовая заявка</b>\nИмя: ${fd.get('name')}\nТелефон: ${fd.get('phone')}\nEmail: ${fd.get('email')}\nКомпания: ${fd.get('company')||'-'}\n\n${fd.get('message')}`;
-    $('#status').textContent = 'Отправляем...';
-    await tgSend(text);
-    $('#status').textContent = 'Заявка отправлена! Мы свяжемся с вами.';
-    e.target.reset();
-  });
-</script>
+    async function tgSend(text) {
+      const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: TG.chat_id, text, parse_mode: "HTML" })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      return res.json();
+    }
+
+    const form = document.getElementById('wholesale-form');
+    const statusEl = document.getElementById('form-status');
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(form);
+      const payload = {
+        name: fd.get('name'),
+        phone: fd.get('phone'),
+        email: fd.get('email'),
+        company: fd.get('company') || '—',
+        message: fd.get('message'),
+        location: fd.get('location') || '—',
+        preferred: fd.get('preferred')
+      };
+      const text = `<b>Оптовая заявка</b>\nИмя: ${payload.name}\nТелефон: ${payload.phone}\nEmail: ${payload.email}\nКомпания: ${payload.company}\nГород: ${payload.location}\nСвязь: ${payload.preferred}\n\nСообщение:\n${payload.message}`;
+
+      statusEl.textContent = 'Отправляем...';
+      try{
+        await tgSend(text);
+        statusEl.textContent = 'Готово! Мы получили вашу заявку.';
+        form.reset();
+      }catch(err){
+        console.error(err);
+        statusEl.textContent = 'Ошибка отправки. Попробуйте ещё раз.';
+      }
+    });
+  </script>
 </body>
 </html>

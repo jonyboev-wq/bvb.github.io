@@ -1,67 +1,135 @@
 
-/* === GRID FIX (drop-in replacement) === */
-*{box-sizing:border-box}
+/* === BVB site grid & theme hotfix === */
+*,
+*::before,
+*::after { box-sizing: border-box; }
 
-/* Container for catalog cards */
-#product-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-  gap:20px;
-  align-items:stretch;
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Noto Sans", sans-serif;
+  background: #0f1115;
+  color: #e8eaed;
+  line-height: 1.5;
 }
 
-/* Make each product a vertical card with equal height */
-#product-grid .product{
-  display:flex;
-  flex-direction:column;
-  grid-column:auto !important;    /* cancel old span rules */
-  padding:0;                      /* we'll pad inner blocks */
-  background:var(--card,rgba(255,255,255,.04));
-  border:1px solid var(--border,rgba(0,0,0,.12));
-  border-radius:16px;
-  overflow:hidden;
-  min-height:420px;
+/* Light/Dark variables */
+:root{
+  --bg: #0f1115;
+  --card: #171a21;
+  --text: #e8eaed;
+  --muted: #a6acb3;
+  --border: #242a33;
+  --accent: #3b82f6;
 }
-
-/* Image: fixed aspect and cover */
-#product-grid .product > img,
-#product-grid .product .thumb img{
-  display:block;
-  width:100%;
-  height:auto;
-  aspect-ratio:4/3;
-  object-fit:cover;
-  border-bottom:1px solid var(--border,rgba(0,0,0,.08));
+:root.light{
+  --bg: #ffffff;
+  --card: #f6f7f9;
+  --text: #0f1115;
+  --muted: #5b6470;
+  --border: #e7ebf0;
+  --accent: #2563eb;
 }
+body { background: var(--bg); color: var(--text); }
 
-/* Support markup with wrapper .thumb */
-#product-grid .product .thumb{width:100%; overflow:hidden}
+.container { max-width: 1160px; padding: 16px; margin: 0 auto; }
 
-/* Text area grows to fill */
-#product-grid .product .meta{
-  flex:1;
-  min-height:auto;
-  padding:14px 16px 8px;
+/* Header/basic */
+.header { position: sticky; top: 0; z-index: 50;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px) saturate(140%);
+  background: color-mix(in hsl, var(--bg) 85%, transparent);
 }
+.nav { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand img.logo { width:40px; height:40px; border-radius:10px; background:#000; object-fit:cover; }
+.brand .title { margin:0; font-size:18px; }
+.badge { color: var(--muted); font-size: 12px; }
 
-/* Price/footer pinned to bottom */
-#product-grid .product .price,
-#product-grid .product .footer{
-  margin:8px 16px 16px;
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding: 10px 14px; border-radius: 12px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  color: var(--text);
+  cursor:pointer; text-decoration:none;
 }
+.btn:hover { transform: translateY(-1px); }
+.btn.primary { background: var(--accent); color:#fff; border-color: transparent; }
+.btn.ghost { background: transparent; }
+.btn.small { padding: 8px 10px; border-radius: 10px; }
 
-/* Prevent super-wide images from stretching columns on Safari */
-img{max-width:100%; height:auto}
-
-/* Card titles + small tweaks */
-#product-grid .product h3{margin:0 0 8px; font-size:1.05rem; line-height:1.3}
-#product-grid .product .help{opacity:.8}
-
-/* Better spacing around socials row so it doesn't stick to grid */
-#home-socials .socials{gap:10px}
-#home-socials{margin-bottom:18px}
-
-/* Desktop fine-tuning */
-@media (min-width:1180px){
-  #product-grid{gap:22px}
+/* Social row spacing */
+.socials {
+  display:flex; gap:10px; flex-wrap:wrap;
+  margin: 8px 0 18px;
 }
+.section { margin: 18px 0 24px; }
+
+/* Product grid fix */
+#product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.product {
+  display:flex; flex-direction:column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 380px;
+}
+.product .thumb{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3; /* keeps cards equal height rows */
+  overflow: hidden;
+  background: #0a0c10;
+}
+.product .thumb img{
+  width: 100%; height: 100%;
+  object-fit: cover; display:block;
+}
+.product .content{
+  flex: 1;
+  display: flex; flex-direction: column;
+  padding: 12px;
+}
+.product .title{ margin:0 0 6px; font-size: 16px; }
+.product .desc{ color: var(--muted); font-size: 13px; margin: 6px 0 10px; }
+.product .meta{ margin-top: auto; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.price{ font-weight: 700; }
+
+/* Product card footer buttons */
+.product .actions { display:flex; gap:8px; margin-top: 10px; }
+.product .actions .btn { flex: 1; }
+
+/* Wholesale page */
+.form-card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 720px){ .grid-2{ grid-template-columns: 1fr; } }
+
+label { display:grid; gap:6px; font-size: 14px; color: var(--muted); }
+input, textarea, select {
+  width: 100%;
+  background: color-mix(in hsl, var(--card) 80%, black 0%);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px;
+  border-radius: 12px;
+  font: inherit;
+}
+textarea{ min-height: 120px; resize: vertical; }
+footer.footer{ border-top: 1px solid var(--border); margin-top: 28px; padding: 18px 0; color: var(--muted); font-size: 12px; }
+
+/* Utility */
+.center { display:grid; place-items:center; }
+.hidden { display:none !important; }
+a { color: inherit; }
+hr.div{ border: 0; border-top:1px solid var(--border); margin: 16px 0; }
