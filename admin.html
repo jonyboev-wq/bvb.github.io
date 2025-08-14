@@ -110,7 +110,7 @@ applyTheme(); document.getElementById('theme-toggle').onclick=()=>applyTheme(doc
        crypto.subtle.digest('SHA-256', d).then(b=>console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')));
     3) Скопируйте результат и вставьте ниже вместо значения.
 */
-const ADMIN_PWD_HASH = "c2a8f9d5c2fbb8a7b0f7d2d6b7f9cd8d6a8b3b4c5d6e7f8890a1b2c3d4e5f607"; // sha256('bvbadmin') ПРИМЕР!
+const ADMIN_PWD_HASH = "f2176fa29ce05cc5610886d35562d655feee636e50770537202443dc7cbbedde"; // sha256('bvbadmin') ПРИМЕР!
 async function sha256(s){const enc=new TextEncoder().encode(s);const b=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function ok(){localStorage.setItem('admin_ok','1'); document.getElementById('login').style.display='none'; document.getElementById('root').style.display='';}
 if(localStorage.getItem('admin_ok')==='1'){ ok(); }
