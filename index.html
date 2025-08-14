@@ -294,6 +294,34 @@ const TG = {
 };
 
 async function tgSend(text) {
+  // === CHECKOUT ЧЕРЕЗ TELEGRAM ===
+function clearCart(){ 
+  cart.length = 0; 
+  saveCart(); 
+}
+
+async function checkout(){
+  if(!cart.length){
+    alert('Корзина пуста.');
+    return;
+  }
+  const name = prompt('Ваше имя:');
+  if(!name) return;
+  const phone = prompt('Телефон для связи:');
+  if(!phone) return;
+
+  const lines = cart.map((it,i)=> `${i+1}. ${it.title} — ${it.price} × ${it.qty}`).join('\n');
+  const text = `<b>Новый заказ</b>\n${lines}\n\nИмя: ${name}\nТелефон: ${phone}`;
+  await tgSend(text);
+  clearCart();
+  alert('Заявка отправлена! Мы свяжемся с вами.');
+}
+
+// Перехватываем клик по кнопке «Корзина» в шапке
+document.getElementById('cart-btn').addEventListener('click', (e)=>{
+  e.preventDefault();
+  checkout();
+});
   try {
     const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
       method: "POST",
