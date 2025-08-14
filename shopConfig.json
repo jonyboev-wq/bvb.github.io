@@ -1,0 +1,24 @@
+{
+  "name": "BVB",
+  "tag": "Официальная страница магазина",
+  "email": "sales@example.com",
+  "phone": "+7 (983) 128-90-90",
+  "inn": "0000000000",
+  "ogrn": "0000000000000",
+  "socials": [
+    { "label": "Avito", "url": "https://www.avito.ru/brands/i184536091?src=sharing", "icon": "avito" },
+    { "label": "Telegram", "url": "https://t.me/bvbvbabab", "icon": "telegram" },
+    { "label": "WhatsApp", "url": "https://wa.me/79831289090", "icon": "whatsapp" }
+  ],
+  "products": [
+    {
+      "id": "fischer-clips",
+      "title": "Лыжные скрепки Fischer",
+      "price": 99,
+      "priceText": "от 99 ₽",
+      "tag": "Хит продаж",
+      "img": "IMG_3280.jpeg",
+      "desc": "Прочные скрепки для лыж Fischer. Подходят для транспортировки и хранения."
+    }
+  ]
+}
