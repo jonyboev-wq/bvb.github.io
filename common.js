@@ -1,138 +1,72 @@
 
-// Global Shop namespace
-window.Shop = (function(){
-  const s = {};
+// Basic config loader + utilities (no cart, Telegram notifications, theme)
+const CONFIG_URL = 'shopConfig.json';
 
-  /* THEME */
-  s.themeInit = function(){
-    const saved = localStorage.getItem('theme')||'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    const btn = document.getElementById('theme-toggle');
-    if(btn){
-      btn.addEventListener('click', ()=>{
-        const cur = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
-        document.documentElement.setAttribute('data-theme', cur);
-        localStorage.setItem('theme', cur);
-        s.restylePrimaryButtons();
-      });
-    }
-    s.restylePrimaryButtons();
-  };
-  s.restylePrimaryButtons = function(){
-    const btnText = getComputedStyle(document.documentElement).getPropertyValue('--btn-text').trim();
-    const btnBg = getComputedStyle(document.documentElement).getPropertyValue('--btn').trim();
-    document.querySelectorAll('.btn.primary').forEach(b=>{
-      b.style.color = btnText;
-      b.style.background = btnBg;
-      b.style.borderColor = btnBg;
+// === Telegram ===
+const TG = {
+  token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
+  chat_id: 5223524937
+};
+
+async function tgSend(text) {
+  try{
+    const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: TG.chat_id, text, parse_mode:"HTML" })
     });
-  };
-
-  /* TELEGRAM (user provided) */
-  const TG = {
-    token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
-    chat_id: 5223524937
-  };
-  s.tgSend = async function(text){
-    try{
-      const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({chat_id: TG.chat_id, text, parse_mode: "HTML"})
-      });
-      if(!res.ok) throw new Error(await res.text());
-    }catch(e){
-      console.error("TG error:", e);
-      alert("Не удалось отправить в Telegram. Проверь токен/связь.");
-    }
-  };
-
-  /* CONFIG LOADER */
-  s.loadConfig = async function(){
-    const tries = ['shopConfig.json','./shopConfig.json','/shopConfig.json'];
-    for(const u of tries){
-      try{
-        const r = await fetch(u, {cache:'no-cache'});
-        if(r.ok) return await r.json();
-      }catch(_){}
-    }
-    throw new Error('shopConfig.json not found');
-  };
-
-  s.slugify = t => t.toString().toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
-
-  /* CART */
-  const CART_KEY='shopCart';
-  s.cart = JSON.parse(localStorage.getItem(CART_KEY)||'[]');
-  s.saveCart = ()=> localStorage.setItem(CART_KEY, JSON.stringify(s.cart));
-  s.countCart = ()=> s.cart.reduce((n,i)=>n+(i.qty||1),0);
-  s.renderCartBadge = ()=>{ const c=document.getElementById('cart-count'); if(c) c.textContent = s.countCart(); };
-
-  s.addToCart = (item)=>{
-    const idx = s.cart.findIndex(i=>i.title===item.title);
-    if(idx>=0){ s.cart[idx].qty += item.qty||1; } else { s.cart.push({...item, qty:item.qty||1}); }
-    s.saveCart(); s.renderCartBadge();
-  };
-  s.removeFromCart = (title)=>{ s.cart = s.cart.filter(i=>i.title!==title); s.saveCart(); s.renderCartBadge(); };
-  s.setQty = (title, qty)=>{
-    const it=s.cart.find(i=>i.title===title); if(!it) return;
-    it.qty = Math.max(1, qty|0); s.saveCart(); s.renderCartBadge();
-  };
-  s.parsePrice = (p)=>{
-    // "2 990 ₽" or "от 99 ₽"
-    const m = (p||"").toString().replace(/[^\d]/g,''); return (m?parseInt(m,10):0);
-  };
-  s.total = ()=> s.cart.reduce((sum,i)=> sum + s.parsePrice(i.price)*(i.qty||1), 0);
-
-  return s;
-})();
-
-/* CART MODAL RENDER */
-function openCart(){
-  const modal = document.getElementById('cart-modal');
-  const body = document.getElementById('cart-body');
-  const total = document.getElementById('cart-total');
-  body.innerHTML='';
-
-  if(!Shop.cart.length){
-    body.innerHTML = '<div class="small">Корзина пуста.</div>';
-  }else{
-    Shop.cart.forEach(it=>{
-      const row = document.createElement('div');
-      row.className='row';
-      row.innerHTML = `
-        <img src="${it.img}" style="width:56px;height:56px;border-radius:10px;border:1px solid var(--accent);object-fit:cover">
-        <div style="flex:1">
-          <div style="font-weight:600">${it.title}</div>
-          <div class="small">${it.price} за шт.</div>
-        </div>
-        <div class="qty">
-          <button class="dec">−</button>
-          <input class="q" value="${it.qty||1}" />
-          <button class="inc">+</button>
-        </div>
-        <button class="btn icon rem" title="Удалить">✖️</button>
-      `;
-      row.querySelector('.inc').onclick=()=>{ Shop.setQty(it.title,(it.qty||1)+1); openCart(); };
-      row.querySelector('.dec').onclick=()=>{ Shop.setQty(it.title,(it.qty||1)-1); openCart(); };
-      row.querySelector('.q').onchange=(e)=>{ Shop.setQty(it.title, parseInt(e.target.value||'1',10)); openCart(); };
-      row.querySelector('.rem').onclick=()=>{ Shop.removeFromCart(it.title); openCart(); };
-      body.appendChild(row);
-    });
-  }
-  total.textContent = new Intl.NumberFormat('ru-RU').format(Shop.total()) + " ₽";
-  modal.classList.add('show');
+    if(!res.ok) console.error("TG error:", await res.text());
+  }catch(e){ console.error(e); }
 }
-function closeCart(){ document.getElementById('cart-modal').classList.remove('show'); }
 
-async function checkout(){
-  if(!Shop.cart.length){ alert('Корзина пуста'); return; }
-  const name = document.getElementById('co-name').value.trim();
-  const phone = document.getElementById('co-phone').value.trim();
-  if(!name || !phone){ alert('Укажите имя и телефон'); return; }
-  const lines = Shop.cart.map((it,i)=> `${i+1}. ${it.title} — ${it.price} × ${it.qty}`).join('\n');
-  const text = `<b>Новый заказ</b>\n${lines}\n\nИтого: ${new Intl.NumberFormat('ru-RU').format(Shop.total())} ₽\nИмя: ${name}\nТелефон: ${phone}`;
-  await Shop.tgSend(text);
-  Shop.cart = []; Shop.saveCart(); Shop.renderCartBadge(); closeCart();
-  alert('Заявка отправлена! Мы свяжемся с вами.');
+// === Theme ===
+function applyTheme(){
+  const stored = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', stored);
+}
+function toggleTheme(){
+  const cur = localStorage.getItem('theme') || 'dark';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', next);
+  applyTheme();
+}
+applyTheme();
+
+// === Config ===
+async function loadConfig(){
+  const r = await fetch(CONFIG_URL + `?v=${Date.now()}`);
+  const cfg = await r.json();
+  return cfg;
+}
+function slugify(s){return s.toString().toLowerCase().trim().replace(/\s+/g,'-')}
+
+// === Wholesale Form -> Telegram ===
+async function bindWholesaleForm(){
+  const form = document.getElementById('wholesale-form');
+  if(!form) return;
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const fd = new FormData(form);
+    const data = Object.fromEntries(fd.entries());
+    const text = `<b>Оптовая заявка</b>\n`+
+      `Имя: ${data.name}\nEmail: ${data.email}\nТелефон: ${data.phone}\nКомпания: ${data.company||'-'}\n`+
+      `Город: ${data.location||'-'}\nСпособ связи: ${data.preferred}\n\n`+
+      `Сообщение:\n${data.message}`;
+    await tgSend(text);
+    const status = document.getElementById('form-status');
+    if(status){ status.textContent = 'Отправлено! Мы свяжемся с вами.'; }
+    form.reset();
+  });
+}
+
+// === Social icons (inline SVG) ===
+function svgIcon(name){
+  const icons = {
+    avito:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="7" r="3"/><circle cx="16" cy="6" r="2"/><circle cx="18" cy="14" r="3"/><circle cx="8" cy="17" r="2.5"/></svg>`,
+    telegram:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9.03 15.47l-.38 5.36c.54 0 .78-.23 1.06-.51l2.54-2.43 5.26 3.84c.97.53 1.66.25 1.92-.89l3.48-16.27c.31-1.44-.52-2-1.46-1.65L1.05 9.22c-1.4.56-1.38 1.4-.24 1.76l5.2 1.62 13.38-7.4c.62-.41 1.18-.18.72.22"/></svg>`,
+    whatsapp:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.9A10 10 0 004 18.6L3 22l3.5-.9A10 10 0 1019.9 4L20 3.9zm-8 16a8 8 0 110-16 8 8 0 010 16zm4.6-5.9c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.2s-.8.9-.9 1-.3.1-.6 0a6.8 6.8 0 01-2-1.2 7.4 7.4 0 01-1.4-1.7c-.1-.3 0-.5.1-.6l.3-.4c.1-.1.1-.3 0-.5-.1-.1-.7-1.8-.9-2.4-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.8.8-1.1 1.9-1.1 3 0 1.8 1.3 3.5 1.5 3.7.2.3 2.6 4.1 6.4 5.6 3.8 1.5 3.8 1 4.5.9.7-.1 2.3-.9 2.6-1.8.3-.9.3-1.7.2-1.8-.1-.1-.3-.2-.6-.3z"/></svg>`,
+    moon:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`,
+    sun:`<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 0l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 4V1h-0v3zm0 19v-3h0v3zM4 12H1v0h3zm19 0h-3v0h3zM6.76 19.16l-1.8 1.8-1.79-1.8 1.79-1.79 1.8 1.79zm10.48 0l1.79 1.8 1.79-1.8-1.79-1.79-1.79 1.79zM12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>`
+  };
+  return icons[name]||'';
 }

@@ -1,90 +1,91 @@
-
-<!doctype html><html lang="ru"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Товар — BVB</title>
-<link rel="icon" href="logo.png"><link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head><body>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Товар — BVB</title>
+  <link rel="icon" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="common.js"></script>
+</head>
+<body>
 <header>
   <div class="container nav">
-    <div class="brand"><img src="logo.png" alt="BVB"><div><h1>BVB</h1><div class="small">Карточка товара</div></div></div>
+    <div class="brand">
+      <div class="logo">BVB</div>
+      <div>
+        <h1>BVB</h1>
+        <p>Карточка товара</p>
+      </div>
+    </div>
     <div class="actions">
       <a class="btn" href="index.html#catalog">Каталог</a>
       <a class="btn" href="wholesale.html">Опт</a>
-      <button id="theme-toggle" class="btn icon" aria-label="Сменить тему">🌓</button>
-      <button class="btn" id="cart-btn">🧺 <span id="cart-count">0</span></button>
+      <button class="btn icon" id="theme-btn" aria-label="Сменить тему"></button>
     </div>
   </div>
 </header>
 
 <main class="container">
-  <article id="view" class="card pad"></article>
+  <section class="card pad product-hero section" id="view" style="min-height:200px">
+    Загрузка...
+  </section>
 </main>
 
-<!-- Cart modal (reuse) -->
-<div id="cart-modal" class="modal" aria-hidden="true">
-  <div class="sheet">
-    <div class="head">
-      <div style="font-weight:700">Корзина</div>
-      <button class="btn icon" onclick="closeCart()">✖️</button>
-    </div>
-    <div class="body">
-      <div id="cart-body"></div>
-      <div class="sep"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <input id="co-name" placeholder="Ваше имя">
-        <input id="co-phone" placeholder="Телефон">
-      </div>
-      <div class="total"><span>Итого</span><span id="cart-total">0 ₽</span></div>
-      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn" onclick="closeCart()">Закрыть</button>
-        <button class="btn primary" onclick="checkout()">Оформить заказ</button>
-      </div>
-    </div>
-  </div>
-</div>
+<footer class="container">
+  <div class="small">© <span id="year"></span> BVB</div>
+</footer>
 
-<footer class="container"><div class="small">© <span id="year"></span> BVB</div></footer>
-
-<script src="common.js"></script>
 <script>
 (async function(){
-  document.getElementById('year').textContent = new Date().getFullYear();
-  Shop.themeInit(); Shop.renderCartBadge();
-  document.getElementById('cart-btn').addEventListener('click',(e)=>{e.preventDefault();openCart();});
-
   const params = new URLSearchParams(location.search);
-  const slug = params.get('slug')||'';
-  try{
-    const cfg = await Shop.loadConfig();
-    const prod = (cfg.products||[]).find(p => (p.slug||Shop.slugify(p.title))===slug);
-    const el = document.getElementById('view');
-    if(!prod){ el.innerHTML='<div class="small">Товар не найден. <a href="index.html#catalog">Вернуться в каталог</a></div>'; return; }
+  const slug = params.get('slug');
+  const cfg = await loadConfig();
+  const prod = cfg.products.find(p => (p.slug || p.title.toLowerCase().replace(/\s+/g,'-')) === slug);
+  const view = document.getElementById('view');
+  if(!prod){ view.innerHTML = 'Товар не найден'; return; }
 
-    el.innerHTML = `
-      <div class="grid">
-        <div class="card pad" style="grid-column:span 6">
-          <img src="${prod.img}" alt="${prod.title}" style="width:100%;border-radius:12px;border:1px solid var(--accent);object-fit:cover">
-        </div>
-        <div style="grid-column:span 6">
-          <h2 style="margin-top:0">${prod.title}</h2>
-          <div class="tag">${prod.tag||''}</div>
-          <div class="price" style="margin:10px 0 16px;font-size:18px">${prod.price}</div>
-          <p class="small">${prod.desc||''}</p>
-          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-            <button class="btn primary" id="add">В корзину</button>
-            ${prod.avito ? `<a class="btn" target="_blank" href="${prod.avito}">Смотреть на Авито</a>`:''}
-          </div>
-        </div>
+  const photos = prod.photos && prod.photos.length ? prod.photos : (prod.img ? [prod.img] : []);
+  const main = photos[0] || '';
+  view.innerHTML = `
+    <div class="gallery">
+      <img id="g-main" class="gallery-main" src="${main}" alt="${prod.title}">
+      <div class="thumbs" id="g-thumbs"></div>
+    </div>
+    <div class="meta">
+      <h2>${prod.title}</h2>
+      ${prod.tag ? `<div class="tag" style="margin:8px 0">${prod.tag}</div>` : ''}
+      <div class="price">${prod.price}</div>
+      <p class="desc">${prod.desc||''}</p>
+      <div class="actions-row" style="margin-top:14px">
+        ${prod.avito ? `<a class="btn avito-btn" href="${prod.avito}" target="_blank" rel="noopener">Открыть на Avito</a>` : ''}
+        <a class="btn" href="wholesale.html?topic=${encodeURIComponent('Опт по товару: '+prod.title)}">Оптовая заявка</a>
       </div>
-    `;
-    document.getElementById('add').addEventListener('click',()=>{
-      Shop.addToCart({title:prod.title, price:prod.price, img:prod.img, qty:1});
-      openCart();
+      ${prod.specs ? `<div class="section"><div class="small">Характеристики:</div><pre style="white-space:pre-wrap;margin:6px 0 0">${prod.specs}</pre></div>`:''}
+      <div class="notice">Если не нашли нужную комплектацию — напишите нам в Telegram.</div>
+    </div>
+  `;
+
+  // thumbs
+  const thumbs = document.getElementById('g-thumbs');
+  photos.forEach((url, i)=>{
+    const t = document.createElement('img');
+    t.src = url; if(i===0) t.classList.add('active');
+    t.addEventListener('click', ()=>{
+      document.getElementById('g-main').src = url;
+      [...thumbs.children].forEach(ch=>ch.classList.remove('active'));
+      t.classList.add('active');
     });
-  }catch(e){
-    document.getElementById('view').innerHTML='<div class="small">Ошибка загрузки данных.</div>';
-  }
+    thumbs.appendChild(t);
+  });
+
+  // theme icon
+  const btn = document.getElementById('theme-btn');
+  function refreshIcon(){ const cur = localStorage.getItem('theme') || 'dark'; btn.innerHTML = svgIcon(cur==='dark' ? 'sun':'moon');}
+  refreshIcon(); btn.addEventListener('click', ()=>{toggleTheme(); refreshIcon();})
+
+  document.getElementById('year').textContent = new Date().getFullYear();
 })();
 </script>
-</body></html>
+</body>
+</html>
