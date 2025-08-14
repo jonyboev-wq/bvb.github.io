@@ -1,6 +1,8 @@
 {
   "name": "BVB",
   "tag": "Официальная страница магазина",
+  "heroTitle": "Лучшие товары по честным ценам",
+  "heroSub": "Мы тщательно отбираем ассортимент и отправляем заказы по всей стране.",
   "email": "sales@example.com",
   "phone": "+7 (900) 000-00-00",
   "socials": [
@@ -20,45 +22,42 @@
       "icon": "whatsapp"
     }
   ],
-  "telegram": {
-    "token": "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
-    "chat_id": 5223524937
-  },
-  "admin": {
-    "password": "popkop06"
-  },
   "products": [
     {
       "title": "Лыжные скрепки Fischer",
+      "slug": "fischer-ski-clips",
       "price": 99,
       "tag": "Хит продаж",
-      "img": "IMG_3280.jpeg",
+      "img": "https://raw.githubusercontent.com/jonyboev-wq/bvb.github.io/main/IMG_3280.jpeg",
       "desc": "Прочные скрепки для лыж Fischer. Подходят для транспортировки и хранения.",
-      "slug": "fischer-ski-clips"
+      "sku": "FIS-CLIP-01"
     },
     {
       "title": "Рюкзак городской",
+      "slug": "urban-backpack",
       "price": 2990,
       "tag": "Новинка",
       "img": "https://images.unsplash.com/photo-1523419409543-a7cbe5c0f7d4?q=80&w=1200&auto=format&fit=crop",
       "desc": "Лёгкий, износостойкий материал, отделение для ноутбука 15\".",
-      "slug": "urban-backpack"
+      "sku": "URB-BAG-15"
     },
     {
       "title": "Наушники беспроводные",
+      "slug": "wireless-headphones",
       "price": 3490,
       "tag": "Топ-выбор",
       "img": "https://images.unsplash.com/photo-1518442400540-92f54f2d1f11?q=80&w=1200&auto=format&fit=crop",
       "desc": "Шумоподавление, 30 часов работы, быстрая зарядка.",
-      "slug": "wireless-headphones"
+      "sku": "WH-30NC"
     },
     {
       "title": "Плед флисовый",
+      "slug": "fleece-blanket",
       "price": 790,
       "tag": "Тёплый уют",
       "img": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop",
       "desc": "Мягкий, гипоаллергенный, 130×170 см. Разные цвета.",
-      "slug": "fleece-blanket"
+      "sku": "FB-130170"
     }
   ]
 }
