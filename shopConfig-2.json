@@ -1,0 +1,69 @@
+{
+  "name": "BVB",
+  "tag": "Официальная страница магазина",
+  "email": "poroshin_2006@bk.ru",
+  "phone": "+7 (983) 128-90-90",
+  "inn": "0000000000",
+  "ogrn": "0000000000000",
+  "socials": [
+    {
+      "label": "Avito",
+      "url": "https://www.avito.ru/brands/i184536091?src=sharing",
+      "icon": "avito"
+    },
+    {
+      "label": "Telegram",
+      "url": "https://t.me/bvbvbabab",
+      "icon": "telegram"
+    },
+    {
+      "label": "WhatsApp",
+      "url": "https://wa.me/79831289090",
+      "icon": "whatsapp"
+    }
+  ],
+  "telegram": {
+    "token": "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
+    "chat_id": 5223524937
+  },
+  "products": [
+    {
+      "id": "fischer-clips",
+      "title": "Лыжные скрепки Fischer",
+      "price": 99,
+      "priceText": "от 99 ₽",
+      "tag": "Хит продаж",
+      "img": "IMG_3280.jpeg",
+      "desc": "Прочные скрепки для лыж Fischer. Подходят для транспортировки и хранения."
+    },
+    {
+      "id": "city-backpack",
+      "title": "Рюкзак городской",
+      "price": 2990,
+      "priceText": "2 990 ₽",
+      "tag": "Новинка",
+      "img": "https://images.unsplash.com/photo-1523419409543-a7cbe5c0f7d4?q=80&w=1200&auto=format&fit=crop",
+      "desc": "Лёгкий, износостойкий материал, отделение для ноутбука 15\""
+    },
+    {
+      "id": "bt-headphones",
+      "title": "Наушники беспроводные",
+      "price": 3490,
+      "priceText": "3 490 ₽",
+      "tag": "Топ-выбор",
+      "img": "https://images.unsplash.com/photo-1518442400540-92f54f2d1f11?q=80&w=1200&auto=format&fit=crop",
+      "desc": "Шумоподавление, 30 часов работы, быстрая зарядка."
+    },
+    {
+      "id": "fleece-blanket",
+      "title": "Плед флисовый",
+      "price": 790,
+      "priceText": "790 ₽",
+      "tag": "Тёплый уют",
+      "img": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop",
+      "desc": "Мягкий, гипоаллергенный, 130×170 см. Разные цвета."
+    }
+  ],
+  "heroTitle": "Лучшие товары по честным ценам",
+  "heroSub": "Мы тщательно отбираем ассортимент и отправляем заказы по всей стране."
+}
