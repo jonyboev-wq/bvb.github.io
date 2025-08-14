@@ -43,6 +43,13 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 function getParam(name){ const u=new URLSearchParams(location.search); return u.get(name)||''; }
 
+function formatPrice(p){
+  if (typeof p === 'number') return p.toLocaleString('ru-RU') + ' ₽';
+  if (!p) return '';
+  const num = Number(String(p).replace(/[^0-9.,]/g,'').replace(',','.'));
+  return isNaN(num) ? String(p) : num.toLocaleString('ru-RU') + ' ₽';
+}
+
 function render(prod){
   const el = document.getElementById('product');
   if(!prod){ el.innerHTML='<p>Товар не найден.</p>'; return; }
@@ -51,14 +58,14 @@ function render(prod){
   el.innerHTML = `
     <div class="grid" style="gap:16px">
       <div class="card" style="grid-column:span 6; padding:8px; display:grid; place-items:center">
-        <img src="${prod.img}" alt="${prod.title}" style="width:100%; max-height:420px; object-fit:cover; border-radius:12px; border:1px solid var(--border)">
+        <img src="${prod.img||''}" alt="${prod.title||''}" style="width:100%; max-height:420px; object-fit:cover; border-radius:12px; border:1px solid var(--border)">
         <div style="display:flex; gap:8px; margin-top:10px">${gal}</div>
       </div>
       <div style="grid-column:span 6">
-        <h2 style="margin-top:0">${prod.title}</h2>
+        <h2 style="margin-top:0">${prod.title||''}</h2>
         <div class="tag" style="margin-bottom:8px">${prod.tag||''}</div>
-        <div class="price" style="font-size:22px">${(prod.price||0).toLocaleString('ru-RU')} ₽</div>
-        ${prod.oldPrice ? `<div class="small" style="text-decoration:line-through; color:var(--muted)">${prod.oldPrice.toLocaleString('ru-RU')} ₽</div>` : ''}
+        <div class="price" style="font-size:22px">${formatPrice(prod.price)}</div>
+        ${prod.oldPrice ? `<div class="small" style="text-decoration:line-through; color:var(--muted)">${formatPrice(prod.oldPrice)}</div>` : ''}
         <p style="margin:10px 0">${prod.desc||''}</p>
         ${specs}
         <div style="display:flex; gap:8px; margin-top:12px">
@@ -71,10 +78,10 @@ function render(prod){
 
 loadConfig().then(cfg=>{
   const slug = getParam('slug');
-  const prod = cfg.products.find(p=>(p.slug||slugify(p.title))===slug);
-  document.getElementById('brand-name').textContent = cfg.name;
+  const prod = (cfg.products||[]).find(p=>(p.slug||slugify(p.title))===slug);
+  document.getElementById('brand-name').textContent = cfg.name || 'BVB';
   render(prod);
-}).catch(err=>console.error(err));
+}).catch(err=>{console.error(err); document.getElementById('product').innerHTML='<p>Ошибка загрузки конфигурации.</p>';});
 </script>
 </body>
 </html>

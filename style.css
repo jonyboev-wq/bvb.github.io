@@ -41,6 +41,9 @@ header{position:sticky; top:0; z-index:20; backdrop-filter:saturate(140%) blur(8
 .hero .title{font-size:32px; margin:0 0 8px}
 .hero .subtitle{color:var(--muted); margin:0 0 10px}
 
+.alert{margin:10px 0; padding:10px 12px; border-radius:12px; border:1px solid var(--border);
+       background:var(--bg-2); color:var(--text);}
+
 .socials{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:4px 0 16px}
 .socials a{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px;
            border:1px solid var(--border); background:var(--card)}
