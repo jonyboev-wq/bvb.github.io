@@ -9,7 +9,7 @@
   <div class="container nav">
     <div class="brand"><img src="logo.png" alt="BVB"><div><h1>BVB</h1><div class="small">Оптовая заявка</div></div></div>
     <div class="actions">
-      <a class="btn secondary" href="index.html#catalog">Каталог</a>
+      <a class="btn" href="index.html#catalog">Каталог</a>
       <button id="theme-toggle" class="btn icon" aria-label="Сменить тему">🌓</button>
     </div>
   </div>
@@ -17,14 +17,17 @@
 
 <main class="container">
   <div class="card pad">
-    <h3 style="margin:0 0 10px">Оставить заявку</h3>
-    <form id="f" class="grid" onsubmit="send(event)">
-      <input name="name" placeholder="Ваше имя" required style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
-      <input name="email" type="email" placeholder="Email" required style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
-      <input name="phone" placeholder="Телефон" required style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
-      <input name="company" placeholder="Компания (опционально)" style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
-      <textarea name="message" placeholder="Что нужно и объём..." required style="grid-column:span 12;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text);min-height:120px"></textarea>
-      <div style="grid-column:span 12;display:flex;gap:8px"><button class="btn primary">Отправить</button><span id="st" class="small"></span></div>
+    <h3 style="margin:0 0 10px">Форма для оптовиков</h3>
+    <form id="form" class="grid">
+      <input name="name" placeholder="Ваше имя" required style="grid-column:span 6">
+      <input name="email" type="email" placeholder="Email" required style="grid-column:span 6">
+      <input name="phone" placeholder="Телефон" required style="grid-column:span 6">
+      <input name="company" placeholder="Компания (опционально)" style="grid-column:span 6">
+      <textarea name="message" placeholder="Что нужно и объём..." required style="grid-column:span 12;min-height:120px"></textarea>
+      <div style="grid-column:span 12;display:flex;gap:8px">
+        <button class="btn primary">Отправить</button>
+        <span id="st" class="small"></span>
+      </div>
     </form>
   </div>
 </main>
@@ -35,11 +38,14 @@
 <script>
 Shop.themeInit();
 document.getElementById('year').textContent = new Date().getFullYear();
-async function send(e){
+document.getElementById('form').addEventListener('submit', async (e)=>{
   e.preventDefault();
-  document.getElementById('st').textContent = 'Отправляем...';
-  // Заглушка — подключи Formspree или Telegram здесь
-  setTimeout(()=>document.getElementById('st').textContent='Заявка отправлена (демо).',800);
-}
+  const fd = new FormData(e.target);
+  const text = `<b>Оптовая заявка</b>\nИмя: ${fd.get('name')}\nEmail: ${fd.get('email')}\nТелефон: ${fd.get('phone')}\nКомпания: ${fd.get('company')||'-'}\n\n${fd.get('message')}`;
+  document.getElementById('st').textContent='Отправляем...';
+  await Shop.tgSend(text);
+  document.getElementById('st').textContent='Отправлено!';
+  e.target.reset();
+});
 </script>
 </body></html>

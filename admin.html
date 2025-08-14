@@ -7,13 +7,15 @@
 </head><body>
 <main class="container">
   <div class="card pad">
-    <h3 style="margin:0 0 10px">Админка (экспорт shopConfig.json)</h3>
+    <h3 style="margin:0 0 10px">Админка (пароль: popkop06)</h3>
     <div id="login"><input id="pass" type="password" placeholder="Пароль" style="padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)"> <button class="btn primary" onclick="auth()">Войти</button></div>
     <div id="panel" style="display:none">
-      <textarea id="json" style="width:100%;min-height:360px;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)"></textarea>
-      <div style="margin-top:10px;display:flex;gap:8px">
+      <div class="small" style="margin-bottom:8px">Редактируйте JSON и нажмите «Скачать JSON», затем замените им <b>shopConfig.json</b> в репозитории.</div>
+      <textarea id="json" style="width:100%;min-height:420px;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)"></textarea>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn primary" onclick="download()">Скачать JSON</button>
-        <span class="small">Скачай файл и замени им <b>shopConfig.json</b> в репозитории.</span>
+        <button class="btn" onclick="load()">Подтянуть текущий shopConfig.json</button>
+        <label class="btn"><input id="file" type="file" accept="application/json" style="display:none" onchange="imp()">Импорт JSON</label>
       </div>
     </div>
   </div>
@@ -23,22 +25,29 @@ function auth(){
   if(document.getElementById('pass').value==='popkop06'){
     document.getElementById('login').style.display='none';
     document.getElementById('panel').style.display='block';
-    // шаблон
-    document.getElementById('json').value = JSON.stringify({
-      name: "BVB",
-      email: "sales@example.com",
-      phone: "+7 (900) 000-00-00",
-      products: [
-        { title:"Лыжные скрепки Fischer", price:"от 99 ₽", tag:"Хит продаж",
-          img:"IMG_3280.jpeg", desc:"Скрепки для лыж Fischer. Для транспортировки и хранения.", slug:"ski-clips" }
-      ]
-    }, null, 2);
+    load();
   }else{ alert('Неверный пароль'); }
+}
+async function load(){
+  try{
+    const r = await fetch('shopConfig.json', {cache:'no-cache'});
+    const j = await r.json();
+    document.getElementById('json').value = JSON.stringify(j, null, 2);
+  }catch(e){
+    document.getElementById('json').value = JSON.stringify({name:"BVB",products:[]}, null, 2);
+  }
 }
 function download(){
   const blob = new Blob([document.getElementById('json').value], {type:'application/json'});
   const a = Object.assign(document.createElement('a'), {href:URL.createObjectURL(blob), download:'shopConfig.json'});
   a.click(); URL.revokeObjectURL(a.href);
+}
+function imp(){
+  const f = document.getElementById('file').files[0];
+  if(!f) return;
+  const rd = new FileReader();
+  rd.onload = e => document.getElementById('json').value = e.target.result;
+  rd.readAsText(f);
 }
 </script>
 </body></html>
