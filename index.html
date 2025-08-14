@@ -1,39 +1,36 @@
-<!DOCTYPE html>
-<html lang="ru">
+
+<!DOCTYPE html><html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BVB — официальный магазин</title>
-  <meta name="description" content="Каталог, оптовые заявки, карточки товара, ссылки на соцсети." />
-  <link rel="icon" href="logo.png">
-  <link rel="stylesheet" href="style.css">
-  <script defer src="common.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BVB — официальный магазин</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="logo.png">
 </head>
 <body>
 <header>
   <div class="container nav">
     <div class="brand">
-      <div class="logo">BVB</div>
+      <div class="brand-logo"><img src="logo.png" alt="BVB"></div>
       <div>
-        <h1>BVB</h1>
-        <p>Официальная страница магазина</p>
+        <strong>BVB</strong><div class="badge">Официальная страница магазина</div>
       </div>
     </div>
     <div class="actions">
-      <a class="btn" href="#catalog">Каталог</a>
-      <a class="btn" href="wholesale.html">Опт</a>
-      <button class="btn icon" id="theme-btn" aria-label="Сменить тему"></button>
+      <a class="btn ghost" href="index.html#catalog">Каталог</a>
+      <a class="btn ghost" href="wholesale.html">Опт</a>
+      <button id="theme-toggle" class="btn icon-only" aria-label="Тема"></button>
     </div>
   </div>
 </header>
 
 <main class="container">
-  <section class="hero section">
-    <h2 class="title">Лучшие товары по честным ценам</h2>
+  <section class="section hero">
+    <h1 class="title">Лучшие товары по честным ценам</h1>
     <p class="subtitle">Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
-    <div class="socials-wrap">
-      <div class="socials" id="socials"></div>
-    </div>
+  </section>
+
+  <section class="section">
+    <div id="socials" class="socials-wrap"></div>
   </section>
 
   <section id="catalog" class="section">
@@ -41,67 +38,55 @@
   </section>
 </main>
 
-<footer class="container">
-  <div class="small">© <span id="year"></span> BVB. Все права защищены.</div>
-</footer>
+<footer class="container"><div class="small">© BVB. Все права защищены.</div></footer>
 
+<script src="common.js"></script>
 <script>
 (async function(){
-  const cfg = await loadConfig();
+  const config = await loadConfig();
 
-  // Соцсети (иконки по центру, аккуратный отступ)
-  const s = document.getElementById('socials');
-  s.innerHTML = '';
-  const socials = [
-    { label:'Avito', url: cfg.socials?.avito || '#', icon:'avito' },
-    { label:'Telegram', url: cfg.socials?.telegram || '#', icon:'telegram' },
-    { label:'WhatsApp', url: cfg.socials?.whatsapp || '#', icon:'whatsapp' },
-  ];
-  socials.forEach(x=>{
-    const a = document.createElement('a');
-    a.className = 'pill'; a.href = x.url; a.target = '_blank'; a.rel='noopener';
-    a.innerHTML = svgIcon(x.icon) + '<span>'+x.label+'</span>';
+  // socials
+  const s = document.getElementById('socials'); s.innerHTML = '';
+  config.socials?.forEach(x=>{
+    const a = document.createElement('a'); a.href = x.url; a.target = '_blank'; a.rel='noopener';
+    a.innerHTML = svgIcon(x.icon) + '<span>'+ x.label +'</span>';
     s.appendChild(a);
   });
 
-  // Каталог
-  const grid = document.getElementById('product-grid');
-  cfg.products.forEach(p => {
+  // products
+  const grid = document.getElementById('product-grid'); grid.innerHTML = '';
+  if(!config.products || !config.products.length){
+    const empty = document.createElement('div');
+    empty.className = 'badge'; empty.textContent = 'Список товаров пуст. Проверь shopConfig.json';
+    grid.appendChild(empty);
+    return;
+  }
+  config.products.forEach(p=>{
+    const firstImg = (p.photos && p.photos[0]) || 'https://via.placeholder.com/240x240?text=Фото';
+    const slug = p.slug || slugify(p.title);
     const card = document.createElement('article');
-    card.className = 'card pad product-card';
+    card.className = 'card pad pcard';
     card.innerHTML = `
-      <img src="${(p.photos && p.photos[0]) || p.img}" alt="${p.title}">
-      <div>
-        <h3>${p.title}</h3>
-        ${p.tag ? `<div class="tag">${p.tag}</div>` : ''}
-        <div class="price">${p.price}</div>
-        <div class="actions-row">
-          ${p.avito ? `<a class="btn avito-btn" href="${p.avito}" target="_blank" rel="noopener">Открыть на Avito</a>` : ''}
-          <a class="btn secondary" href="product.html?slug=${encodeURIComponent((p.slug||'') || (p.title||'').toLowerCase().replace(/\s+/g,'-'))}">Подробнее</a>
+      <img class="pcard-img" src="${firstImg}" alt="${p.title}">
+      <div class="meta" style="flex:1">
+        <h3 class="pcard-title">${p.title}</h3>
+        ${p.tag ? `<div class="tag">${p.tag}</div>`:''}
+        <p class="badge" style="margin:6px 0 10px">${p.desc || ''}</p>
+        <div class="price">${p.price || ''}</div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          ${p.avito ? `<a class="btn" href="${p.avito}" target="_blank" rel="noopener">Открыть на Avito</a>`:''}
+          <a class="btn primary" href="product.html?slug=${encodeURIComponent(slug)}">Подробнее</a>
         </div>
       </div>
     `;
-    // кликабельность всей карточки
+    // открытие по клику на всю карточку
     card.addEventListener('click', (e)=>{
-      const target = e.target;
-      if(target.closest('a')) return; // не перехватываем клики по кнопкам
-      location.href = "product.html?slug=" + encodeURIComponent((p.slug||'') || (p.title||'').toLowerCase().replace(/\s+/g,'-'));
+      // не переопределять если клик по кнопке
+      if(e.target.closest('a')) return;
+      location.href = 'product.html?slug='+encodeURIComponent(slug);
     });
     grid.appendChild(card);
   });
-
-  // Год
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Theme button (icon only)
-  const btn = document.getElementById('theme-btn');
-  function refreshIcon(){
-    const cur = localStorage.getItem('theme') || 'dark';
-    btn.innerHTML = svgIcon(cur==='dark' ? 'sun' : 'moon');
-  }
-  refreshIcon();
-  btn.addEventListener('click', ()=>{ toggleTheme(); refreshIcon(); });
 })();
 </script>
-</body>
-</html>
+</body></html>
