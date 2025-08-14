@@ -8,50 +8,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!--
-  ОБНОВЛЕНО: 
-  • Исправлена адаптивность для мобильных (картинки, сетка, кнопки, форма).
-  • Нейтрально-голубая палитра.
-  • Отдельные карточки товара (SPA-навигация #/product/:slug) с кнопкой «в корзину».
-  • Простая корзина (localStorage) и индикатор в шапке.
-  • Добавлена ссылка на Авито в соцсетях.
-  -->
-
   <style>
     :root{
-      /* Нейтрально-голубая тема */
-      --bg: #0b1220;               /* фон */
-      --bg-2: #0e1729;
-      --card: #111a2e;             /* карточки */
-      --muted: #9fb0c8;            /* вторичный текст */
-      --text: #e6eef9;             /* основной текст */
-      --accent: #3b82f6;           /* синий */
-      --accent-2: #38bdf8;         /* голубой */
-      --border: #1d2a44;           /* границы */
-      --shadow: 0 12px 34px rgba(0,0,0,.35);
-      --radius: 16px;
-      --maxw: 1100px;
+      --bg:#0b1220;--bg-2:#0e1729;--card:#111a2e;--muted:#9fb0c8;--text:#e6eef9;
+      --accent:#3b82f6;--accent-2:#38bdf8;--border:#1d2a44;--shadow:0 12px 34px rgba(0,0,0,.35);
+      --radius:16px;--maxw:1100px
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
     body{
-      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 70% -20%, rgba(59,130,246,.25), transparent 60%),
-                  radial-gradient(900px 500px at -10% 20%, rgba(56,189,248,.18), transparent 60%),
-                  var(--bg);
-      color: var(--text);
-      line-height:1.6;
+      font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 70% -20%, rgba(59,130,246,.25), transparent 60%),
+        radial-gradient(900px 500px at -10% 20%, rgba(56,189,248,.18), transparent 60%),
+        var(--bg);
+      color:var(--text);line-height:1.6
     }
     a{color:var(--text);text-decoration:none}
     .container{max-width:var(--maxw);margin:0 auto;padding:16px}
 
-    header{
-      position:sticky;top:0;z-index:30;
-      backdrop-filter:saturate(140%) blur(10px);
-      background: linear-gradient(to bottom, rgba(11,18,32,.92), rgba(11,18,32,.65));
-      border-bottom:1px solid var(--border);
-    }
+    header{position:sticky;top:0;z-index:30;backdrop-filter:saturate(140%) blur(10px);
+      background:linear-gradient(to bottom, rgba(11,18,32,.92), rgba(11,18,32,.65));
+      border-bottom:1px solid var(--border)}
     .nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand{display:flex;align-items:center;gap:12px;min-width:0}
     .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#1d4ed8);display:grid;place-items:center;box-shadow:var(--shadow)}
@@ -63,7 +41,6 @@
     .btn.primary{background:linear-gradient(180deg,var(--accent),#1d4ed8);border:none;color:white}
     .btn.ghost{background:transparent}
 
-    /* Cart badge */
     #cart-btn{position:relative}
     #cart-count{position:absolute;top:-6px;right:-6px;background:var(--accent-2);color:#06101e;border-radius:999px;font-size:11px;min-width:18px;height:18px;display:grid;place-items:center;border:1px solid #0b1729}
 
@@ -71,17 +48,17 @@
     .hero .title{font-size:32px;line-height:1.15;letter-spacing:-.02em;margin:0 0 10px}
     .hero .subtitle{color:var(--muted);font-size:15px;max-width:720px;margin:0 0 18px}
     .hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+    .badge{font-size:12px;color:var(--muted)}
 
     .socials{display:flex;gap:8px;flex-wrap:wrap}
     .socials a{padding:10px 12px;border:1px solid var(--border);border-radius:12px;display:inline-flex;align-items:center;gap:8px}
-    .badge{font-size:12px;color:var(--muted)}
 
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
     .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
     .card .pad{padding:16px}
 
     .products{padding:8px 0 28px}
-    .product{grid-column: span 12;display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+    .product{grid-column:span 12;display:flex;gap:12px;align-items:flex-start;cursor:pointer}
     .product img{width:110px;height:110px;border-radius:12px;object-fit:cover;border:1px solid var(--border)}
     .product .meta{flex:1;min-width:0}
     .product h3{margin:0 0 6px;font-size:16px}
@@ -100,9 +77,7 @@
     .wholesale{padding:16px}
     form{display:grid;gap:10px}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    input, textarea, select{
-      background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:12px;color:var(--text);font:inherit
-    }
+    input, textarea, select{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:12px;color:var(--text);font:inherit}
     textarea{min-height:120px}
     label{font-size:14px;color:var(--muted);display:grid;gap:6px}
     .help{font-size:12px;color:var(--muted)}
@@ -115,7 +90,6 @@
     .admin h4{margin:0 0 10px}
     .admin .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
-    /* Мобильные правки */
     @media (max-width: 719px){
       .container{padding:12px}
       .hero{padding:22px 0 14px}
@@ -125,7 +99,6 @@
       .row{grid-template-columns:1fr}
       .btn{width:100%}
     }
-
     @media (min-width:720px){
       .hero{padding:64px 0 28px}
       .product{grid-column: span 6}
@@ -154,7 +127,6 @@
   </header>
 
   <main class="container" id="app">
-    <!-- VIEW: Главная (каталог + соцсети + опт) -->
     <section class="hero" id="home-hero">
       <h2 class="title" id="hero-title">Лучшие товары по честным ценам</h2>
       <p class="subtitle" id="hero-sub">Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
@@ -178,35 +150,17 @@
       <p class="help">Заполните форму — мы свяжемся с вами в ближайшее время с предложением по оптовой партии.</p>
       <form id="wholesale-form" action="https://formspree.io/f/your-endpoint" method="POST">
         <div class="row">
-          <div>
-            <label>Ваше имя<input required name="name" placeholder="Иван Иванов" /></label>
-          </div>
-          <div>
-            <label>Email для связи<input required type="email" name="email" placeholder="you@example.com" /></label>
-          </div>
+          <div><label>Ваше имя<input required name="name" placeholder="Иван Иванов" /></label></div>
+          <div><label>Email для связи<input required type="email" name="email" placeholder="you@example.com" /></label></div>
         </div>
         <div class="row">
-          <div>
-            <label>Телефон<input required name="phone" placeholder="+7 ..." /></label>
-          </div>
-          <div>
-            <label>Компания (опционально)<input name="company" placeholder="ООО &quot;Пример&quot;" /></label>
-          </div>
+          <div><label>Телефон<input required name="phone" placeholder="+7 ..." /></label></div>
+          <div><label>Компания (опционально)<input name="company" placeholder="ООО &quot;Пример&quot;" /></label></div>
         </div>
-        <div>
-          <label>Товар и объём<textarea required name="message" placeholder="Например: Арт. 123, 200 шт. Срок поставки — до 15 сентября."></textarea></label>
-        </div>
+        <div><label>Товар и объём<textarea required name="message" placeholder="Например: Арт. 123, 200 шт. Срок поставки — до 15 сентября."></textarea></label></div>
         <div class="row">
-          <div>
-            <label>Город/регион<input name="location" placeholder="Москва" /></label>
-          </div>
-          <div>
-            <label>Способ связи<select name="preferred">
-              <option value="email">Email</option>
-              <option value="phone">Телефон</option>
-              <option value="messenger">Мессенджер</option>
-            </select></label>
-          </div>
+          <div><label>Город/регион<input name="location" placeholder="Москва" /></label></div>
+          <div><label>Способ связи<select name="preferred"><option value="email">Email</option><option value="phone">Телефон</option><option value="messenger">Мессенджер</option></select></label></div>
         </div>
         <input type="hidden" name="formName" value="Wholesale Lead" />
         <button class="btn primary" type="submit">Отправить заявку</button>
@@ -214,7 +168,6 @@
       </form>
     </section>
 
-    <!-- VIEW: Карточка товара -->
     <section id="product-view" class="card pad" style="display:none"></section>
   </main>
 
@@ -242,7 +195,8 @@
     </div>
   </div>
 
-  <script>/* === РЕДАКТИРУЕМЫЕ НАСТРОЙКИ (CONFIG) === */
+  <script>
+/* === РЕДАКТИРУЕМЫЕ НАСТРОЙКИ (CONFIG) === */
 const CONFIG = JSON.parse(localStorage.getItem('shopConfig')) || {
   name: "BVB",
   tag: "Официальная страница магазина",
@@ -250,287 +204,228 @@ const CONFIG = JSON.parse(localStorage.getItem('shopConfig')) || {
   heroSub: "Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.",
   email: "sales@example.com",
   phone: "+7 (983) 128-90-90",
+  inn: "0000000000",
+  ogrn: "0000000000000",
   socials: [
     { label: "Avito",    url: "https://www.avito.ru/brands/i184536091?src=sharing", icon: "avito" },
-    { label: "Telegram", url: "https://t.me/bvbvbabab",                             icon: "telegram" },
-    { label: "WhatsApp", url: "https://wa.me/79831289090",                          icon: "whatsapp" }
+    { label: "Telegram", url: "https://t.me/bvbvbabab",                              icon: "telegram" },
+    { label: "WhatsApp", url: "https://wa.me/79831289090",                           icon: "whatsapp" }
   ],
   products: [
-    {
-      title: "Лыжные скрепки Fischer",
-      price: "от 99 ₽",
-      tag: "Хит продаж",
-      img: "https://github.com/jonyboev-wq/shop/blob/main/IMG_3280.jpeg?raw=true",
-      desc: "Прочные скрепки для лыж Fischer. Подходят для транспортировки и хранения."
-    },
-    {
-      title: "Рюкзак городской",
-      price: "2 990 ₽",
-      tag: "Новинка",
-      img: "https://images.unsplash.com/photo-1523419409543-a7cbe5c0f7d4?q=80&w=1200&auto=format&fit=crop",
-      desc: "Лёгкий, износостойкий материал, отделение для ноутбука 15\"."
-    },
-    {
-      title: "Наушники беспроводные",
-      price: "3 490 ₽",
-      tag: "Топ-выбор",
-      img: "https://images.unsplash.com/photo-1518442400540-92f54f2d1f11?q=80&w=1200&auto=format&fit=crop",
-      desc: "Шумоподавление, 30 часов работы, быстрая зарядка."
-    },
-    {
-      title: "Плед флисовый",
-      price: "790 ₽",
-      tag: "Тёплый уют",
-      img: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop",
-      desc: "Мягкий, гипоаллергенный, 130×170 см. Разные цвета."
-    }
+    { id: "fischer-clips",  title: "Лыжные скрепки Fischer", price: "от 99 ₽", tag: "Хит продаж", img: "IMG_3280.jpeg", desc: "Прочные скрепки для лыж Fischer. Подходят для транспортировки и хранения." },
+    { id: "city-backpack",  title: "Рюкзак городской",        price: "2 990 ₽", tag: "Новинка",    img: "https://images.unsplash.com/photo-1523419409543-a7cbe5c0f7d4?q=80&w=1200&auto=format&fit=crop", desc: "Лёгкий, износостойкий материал, отделение для ноутбука 15\"" },
+    { id: "bt-headphones",  title: "Наушники беспроводные",   price: "3 490 ₽", tag: "Топ-выбор",  img: "https://images.unsplash.com/photo-1518442400540-92f54f2d1f11?q=80&w=1200&auto=format&fit=crop", desc: "Шумоподавление, 30 часов работы, быстрая зарядка." },
+    { id: "fleece-blanket", title: "Плед флисовый",           price: "790 ₽",   tag: "Тёплый уют", img: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop", desc: "Мягкий, гипоаллергенный, 130×170 см. Разные цвета." }
   ]
 };
 
-/* === TELEGRAM: НАСТРОЙКИ И ОТПРАВКА === */
-const TG = {
-  token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM",
-  chat_id: 5223524937
-};
+/* === ПРОСТАЯ КОРЗИНА === */
+const CART_KEY = 'shopCart';
+const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); renderCartBadge(); }
+function addToCart(item){ cart.push(item); saveCart(); alert('Товар добавлен в корзину'); }
+function cartCount(){ return cart.length; }
+function renderCartBadge(){ const c = document.getElementById('cart-count'); if(c) c.textContent = cartCount(); }
 
-async function tgSend(text) {
-  try {
+/* === TELEGRAM: НАСТРОЙКИ И ОТПРАВКА === */
+const TG = { token: "8331334111:AAGgH9i3H76H_TEhMGbNhySDmf-aXlYteTM", chat_id: 5223524937 };
+async function tgSend(text){
+  try{
     const res = await fetch(`https://api.telegram.org/bot${TG.token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chat_id: TG.chat_id, text, parse_mode: "HTML" })
     });
-    if (!res.ok) {
-      console.error("Telegram error:", await res.text());
-      alert("Ошибка отправки в Telegram (см. консоль).");
-    }
-  } catch (e) {
-    console.error(e);
-    alert("Сетевая ошибка при отправке в Telegram.");
-  }
+    if(!res.ok){ console.error("Telegram error:", await res.text()); alert("Ошибка отправки в Telegram (см. консоль)."); }
+  }catch(e){ console.error(e); alert("Сетевая ошибка при отправке в Telegram."); }
 }
 
 /* === CHECKOUT ЧЕРЕЗ TELEGRAM === */
-function clearCart(){
-  cart.length = 0;
-  saveCart();
+function clearCart(){ cart.length = 0; saveCart(); }
+async function checkout(){
+  if(!cart.length){ alert('Корзина пуста.'); return; }
+  const name = prompt('Ваше имя:'); if(!name) return;
+  const phone = prompt('Телефон для связи:'); if(!phone) return;
+  const lines = cart.map((it,i)=> `${i+1}. ${it.title} — ${it.price} × ${it.qty}`).join('\n');
+  const text = `<b>Новый заказ</b>\n${lines}\n\nИмя: ${name}\nТелефон: ${phone}`;
+  await tgSend(text); clearCart(); alert('Заявка отправлена! Мы свяжемся с вами.');
+}
+document.getElementById('cart-btn').addEventListener('click', (e)=>{ e.preventDefault(); checkout(); });
+
+/* === ИКОНКИ === */
+function iconSVG(name){
+  const icons = {
+    telegram:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.036 15.47l-.38 5.36c.542 0 .776-.233 1.056-.512l2.536-2.43 5.256 3.84c.964.533 1.654.252 1.916-.89l3.472-16.27v-.002c.308-1.44-.52-2.004-1.46-1.654L1.05 9.22C-.346 9.78-.324 10.62.81 10.98l5.2 1.62L19.384 5.2c.616-.404 1.178-.18.716.224"/></svg>',
+    whatsapp:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 3.9A10 10 0 004 18.6L3 22l3.5-.9A10 10 0 1019.9 4L20 3.9zm-8 16a8 8 0 110-16 8 8 0 010 16zm4.6-5.9c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.2s-.8.9-.9 1-.3.1-.6 0a6.8 6.8 0 01-2-1.2 7.4 7.4 0 01-1.4-1.7c-.1-.3 0-.5.1-.6l.3-.4c.1-.1.1-.3 0-.5-.1-.1-.7-1.8-.9-2.4-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.8.8-1.1 1.9-1.1 3 0 1.8 1.3 3.5 1.5 3.7.2.3 2.6 4.1 6.4 5.6 3.8 1.5 3.8 1 4.5.9.7-.1 2.3-.9 2.6-1.8.3-.9.3-1.7.2-1.8-.1-.1-.3-.2-.6-.3z"/></svg>',
+    avito:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="7" cy="7" r="3"/><circle cx="16" cy="6" r="2"/><circle cx="18" cy="14" r="3"/><circle cx="8" cy="17" r="2.5"/></svg>'
+  };
+  return icons[name] || '';
 }
 
-async function checkout(){
-  if(!cart.length){
-    alert('Корзина пуста.');
-    return;
-  }
-  let summary = cart.map((it,i)=> `${i+1}. ${it.title} — ${it.price} × ${it.qty}`).join('
-');
-  alert('В вашей корзине:
-' + summary);
-  const name = prompt('Ваше имя:');
-  if(!name) return;
-  const phone = prompt('Телефон для связи:');
-  if(!phone) return;
-  const text = `<b>Новый заказ</b>
-${summary}
+/* === РЕНДЕР ГЛАВНОЙ === */
+function renderHome(){
+  document.getElementById('home-hero').style.display = '';
+  document.getElementById('home-socials').style.display = '';
+  document.getElementById('catalog').style.display = '';
+  document.getElementById('wholesale').style.display = '';
+  document.getElementById('product-view').style.display = 'none';
 
-Имя: ${name}
-Телефон: ${phone}`;
-  tgSend(text).then(()=>{
-    clearCart();
-    alert('Заявка отправлена! Мы свяжемся с вами.');
+  document.getElementById('brand-name').textContent = CONFIG.name;
+  document.getElementById('footer-name').textContent = CONFIG.name;
+  document.getElementById('brand-tag').textContent = CONFIG.tag;
+  document.getElementById('hero-title').textContent = CONFIG.heroTitle;
+  document.getElementById('hero-sub').textContent = CONFIG.heroSub;
+  document.getElementById('contact-email').textContent = CONFIG.email;
+  document.getElementById('contact-email').href = `mailto:${CONFIG.email}`;
+  document.getElementById('contact-phone').textContent = CONFIG.phone;
+  document.getElementById('footer-inn').textContent = CONFIG.inn || "0000000000";
+  document.getElementById('footer-ogrn').textContent = CONFIG.ogrn || "0000000000000";
+
+  const socialsWrap = document.getElementById('socials');
+  socialsWrap.innerHTML = '';
+  CONFIG.socials.forEach(s => {
+    const a = document.createElement('a');
+    a.href = s.url; a.target = '_blank'; a.rel = 'noopener';
+    a.innerHTML = `${iconSVG(s.icon)} <span>${s.label}</span>`;
+    socialsWrap.appendChild(a);
+  });
+
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '';
+  CONFIG.products.forEach(p => {
+    const card = document.createElement('article');
+    card.className = 'card pad product';
+    card.innerHTML = `
+      <img src="${p.img}" alt="${p.title}">
+      <div class="meta">
+        <h3>${p.title}</h3>
+        <div class="tag">${p.tag}</div>
+        <p class="help" style="margin:6px 0 10px">${p.desc}</p>
+        <div class="price">${p.price}</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn primary" data-add="${p.id}">Добавить в корзину</button>
+          <a class="btn" href="#/product?id=${encodeURIComponent(p.id)}">Подробнее</a>
+        </div>
+      </div>
+    `;
+    // клик по карточке открывает страницу товара
+    card.addEventListener('click', (e)=>{
+      // если нажали именно на кнопку "Добавить", не переходить
+      const btn = e.target.closest('[data-add]');
+      if(btn){
+        e.stopPropagation();
+        const id = btn.getAttribute('data-add');
+        addToCart({ id:p.id, title:p.title, price:p.price, img:p.img, qty:1 });
+        return;
+      }
+      location.hash = `#/product?id=${encodeURIComponent(p.id)}`;
+    });
+    grid.appendChild(card);
+  });
+
+  // заполняем поля быстрой правки
+  document.getElementById('inp-name').value = CONFIG.name;
+  document.getElementById('inp-tag').value = CONFIG.tag;
+  document.getElementById('inp-email').value = CONFIG.email;
+  document.getElementById('inp-phone').value = CONFIG.phone;
+}
+
+/* === РЕНДЕР КАРТОЧКИ ПО id === */
+function renderProductById(id){
+  const prod = CONFIG.products.find(p => String(p.id) === String(id));
+  if(!prod){ location.hash = '#'; return; }
+
+  document.getElementById('home-hero').style.display = 'none';
+  document.getElementById('home-socials').style.display = 'none';
+  document.getElementById('catalog').style.display = 'none';
+  document.getElementById('wholesale').style.display = 'none';
+
+  const view = document.getElementById('product-view');
+  view.style.display = '';
+  view.className = 'card pad';
+  view.innerHTML = `
+    <a class="btn ghost" href="#">← Назад к каталогу</a>
+    <div class="p-hero" style="margin-top:10px">
+      <img class="p-img" src="${prod.img}" alt="${prod.title}">
+      <div>
+        <h2 class="p-title">${prod.title}</h2>
+        <div class="tag" style="margin:6px 0 10px">${prod.tag}</div>
+        <div class="p-price">${prod.price}</div>
+        <p class="help" style="margin:10px 0 14px">${prod.desc}</p>
+        <div class="qty">
+          <label>Количество
+            <input id="qty" type="number" min="1" value="1" />
+          </label>
+          <button class="btn primary" id="add-to-cart">Добавить в корзину</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('add-to-cart').addEventListener('click', ()=>{
+    const q = Math.max(1, parseInt(document.getElementById('qty').value||'1',10));
+    addToCart({ id: prod.id, title: prod.title, price: prod.price, img: prod.img, qty: q });
   });
 }
 
-// Кнопка «Корзина» в шапке
-document.getElementById('cart-btn').addEventListener('click', (e)=>{
-  e.preventDefault();
-  checkout();
+/* === РОУТЕР === */
+function router(){
+  const h = (location.hash || '').replace(/^#/,'');
+  if(h.startsWith('/product')){
+    const q = h.split('?')[1] || '';
+    const id = new URLSearchParams(q).get('id');
+    if(id) renderProductById(id); else renderHome();
+  } else {
+    renderHome();
+  }
+}
+window.addEventListener('hashchange', router);
+
+/* === ОТПРАВКА ОПТОВОЙ ФОРМЫ (Formspree, если подключишь endpoint) === */
+const form = document.getElementById('wholesale-form');
+const statusEl = document.getElementById('form-status');
+form.addEventListener('submit', async (e) => {
+  if(form.action.includes('formspree.io') && form.action.includes('your-endpoint')){
+    alert('Замените action формы на ваш Formspree endpoint. Сейчас заявка не будет отправлена.');
+    e.preventDefault();
+    return;
+  }
+  statusEl.textContent = 'Отправляем...';
+  if(form.action.includes('formspree.io')){
+    e.preventDefault();
+    try{
+      const formData = new FormData(form);
+      const res = await fetch(form.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' }});
+      if(res.ok){ statusEl.textContent = 'Готово! Мы получили вашу заявку.'; form.reset(); }
+      else { statusEl.textContent = 'Ошибка отправки. Попробуйте позже или свяжитесь по email.'; }
+    }catch(err){ statusEl.textContent = 'Сетевая ошибка. Проверьте интернет-соединение.'; }
+  }
 });
-/* === ПРОСТАЯ КОРЗИНА === */
-    const CART_KEY = 'shopCart';
-    const cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
-    function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); renderCartBadge(); }
-    function addToCart(item){ cart.push(item); saveCart(); alert('Товар добавлен в корзину'); }
-    function cartCount(){ return cart.length; }
-    function renderCartBadge(){ const c = document.getElementById('cart-count'); if(c) c.textContent = cartCount(); }
 
-    /* === ХЕЛПЕРЫ === */
-    const $ = (s,el=document)=>el.querySelector(s);
-    const $$ = (s,el=document)=>Array.from(el.querySelectorAll(s));
-    function slugify(s){ return s.toString().toLowerCase().trim().split(' ').join('-'); }
+/* === ПАНЕЛЬ АДМИНА === */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === '\\'){
+    const panel = document.getElementById('admin-panel');
+    const isVisible = getComputedStyle(panel).display !== 'none';
+    panel.style.display = isVisible ? 'none' : 'block';
+  }
+});
+document.getElementById('save-config').addEventListener('click', ()=>{
+  const next = {
+    ...CONFIG,
+    name: document.getElementById('inp-name').value.trim() || CONFIG.name,
+    tag: document.getElementById('inp-tag').value.trim() || CONFIG.tag,
+    email: document.getElementById('inp-email').value.trim() || CONFIG.email,
+    phone: document.getElementById('inp-phone').value.trim() || CONFIG.phone,
+  };
+  localStorage.setItem('shopConfig', JSON.stringify(next));
+  location.reload();
+});
 
-    function iconSVG(name){
-      const icons = {
-        telegram: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.036 15.47l-.38 5.36c.542 0 .776-.233 1.056-.512l2.536-2.43 5.256 3.84c.964.533 1.654.252 1.916-.89l3.472-16.27v-.002c.308-1.44-.52-2.004-1.46-1.654L1.05 9.22C-.346 9.78-.324 10.62.81 10.98l5.2 1.62L19.384 5.2c.616-.404 1.178-.18.716.224"/></svg>',
-        vk: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.9 17.6c-4.9 0-7.8-3.2-8.6-8.6H7c.5 3.5 2.3 5 3.4 5.3V9H14v4.5c1.1-.1 2.2-1.5 2.6-2.9h2.6c-.3 1.8-1.6 3.3-2.5 3.9.9.5 2.2 1.7 2.7 3.1h-2.9c-.5-1.1-1.5-2.2-2.9-2.3v2.3h-2.7z"/></svg>',
-        instagram: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 5a5 5 0 100 10 5 5 0 000-10zm6.5-.8a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z"/></svg>',
-        whatsapp: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 3.9A10 10 0 004 18.6L3 22l3.5-.9A10 10 0 1019.9 4L20 3.9zm-8 16a8 8 0 110-16 8 8 0 010 16zm4.6-5.9c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.2s-.8.9-.9 1-.3.1-.6 0a6.8 6.8 0 01-2-1.2 7.4 7.4 0 01-1.4-1.7c-.1-.3 0-.5.1-.6l.3-.4c.1-.1.1-.3 0-.5-.1-.1-.7-1.8-.9-2.4-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.8.8-1.1 1.9-1.1 3 0 1.8 1.3 3.5 1.5 3.7.2.3 2.6 4.1 6.4 5.6 3.8 1.5 3.8 1 4.5.9.7-.1 2.3-.9 2.6-1.8.3-.9.3-1.7.2-1.8-.1-.1-.3-.2-.6-.3z"/></svg>',
-        avito: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="7" cy="7" r="3"/><circle cx="16" cy="6" r="2"/><circle cx="18" cy="14" r="3"/><circle cx="8" cy="17" r="2.5"/></svg>'
-      };
-      return icons[name] || '';
-    }
-
-    /* === РЕНДЕР ГЛАВНОГО ЭКРАНА === */
-    function renderHome(){
-      // Показать главные секции
-      document.getElementById('home-hero').style.display = '';
-      document.getElementById('home-socials').style.display = '';
-      document.getElementById('catalog').style.display = '';
-      document.getElementById('wholesale').style.display = '';
-      document.getElementById('product-view').style.display = 'none';
-
-      // Шапка и герой
-      document.getElementById('brand-name').textContent = CONFIG.name;
-      document.getElementById('footer-name').textContent = CONFIG.name;
-      document.getElementById('brand-tag').textContent = CONFIG.tag;
-      document.getElementById('hero-title').textContent = CONFIG.heroTitle;
-      document.getElementById('hero-sub').textContent = CONFIG.heroSub;
-      document.getElementById('contact-email').textContent = CONFIG.email;
-      document.getElementById('contact-email').href = `mailto:${CONFIG.email}`;
-      document.getElementById('contact-phone').textContent = CONFIG.phone;
-      document.getElementById('footer-inn').textContent = CONFIG.inn;
-      document.getElementById('footer-ogrn').textContent = CONFIG.ogrn;
-
-      // Соцсети
-      const socialsWrap = document.getElementById('socials');
-      socialsWrap.innerHTML = '';
-      CONFIG.socials.forEach(s => {
-        const a = document.createElement('a');
-        a.href = s.url; a.target = '_blank'; a.rel = 'noopener';
-        a.innerHTML = `${iconSVG(s.icon)} <span>${s.label}</span>`;
-        socialsWrap.appendChild(a);
-      });
-
-      // Товары
-      const grid = document.getElementById('product-grid');
-      grid.innerHTML = '';
-      CONFIG.products.forEach(p => {
-        const card = document.createElement('article');
-        card.className = 'card pad product';
-        card.innerHTML = `
-          <img src=\"${p.img}\" alt=\"${p.title}\">
-          <div class=\"meta\">
-            <h3>${p.title}</h3>
-            <div class=\"tag\">${p.tag}</div>
-            <p class=\"help\" style=\"margin:6px 0 10px\">${p.desc}</p>
-            <div class=\"price\">${p.price}</div>
-            <button class=\"btn primary\" onclick='addToCart({ title: \"${p.title}\", price: \"${p.price}\", img: \"${p.img}\", qty: 1 }); event.stopPropagation();'>Добавить в корзину</button>
-          </div>
-        `;
-        card.addEventListener('click', ()=>{ location.hash = '#/product/'+encodeURIComponent(slugify(p.title)); });
-        grid.appendChild(card);
-      });
-
-      // Admin quick edit inputs
-      document.getElementById('inp-name').value = CONFIG.name;
-      document.getElementById('inp-tag').value = CONFIG.tag;
-      document.getElementById('inp-email').value = CONFIG.email;
-      document.getElementById('inp-phone').value = CONFIG.phone;
-    }
-
-    /* === РЕНДЕР КАРТОЧКИ ТОВАРА === */
-    function renderProduct(slug){
-      const prod = CONFIG.products.find(p=>slugify(p.title)===slug);
-      if(!prod){ location.hash = '#'; return; }
-
-      // Скрыть главные секции
-      document.getElementById('home-hero').style.display = 'none';
-      document.getElementById('home-socials').style.display = 'none';
-      document.getElementById('catalog').style.display = 'none';
-      document.getElementById('wholesale').style.display = 'none';
-
-      const view = document.getElementById('product-view');
-      view.style.display = '';
-      view.className = 'card pad';
-      view.innerHTML = `
-        <a class="btn ghost" href="#">← Назад к каталогу</a>
-        <div class="p-hero" style="margin-top:10px">
-          <img class="p-img" src="${prod.img}" alt="${prod.title}">
-          <div>
-            <h2 class="p-title">${prod.title}</h2>
-            <div class="tag" style="margin:6px 0 10px">${prod.tag}</div>
-            <div class="p-price">${prod.price}</div>
-            <p class="help" style="margin:10px 0 14px">${prod.desc}</p>
-            <div class="qty">
-              <label>Количество
-                <input id="qty" type="number" min="1" value="1" />
-              </label>
-              <button class="btn primary" id="add-to-cart">Добавить в корзину</button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('add-to-cart').addEventListener('click', ()=>{
-        const q = Math.max(1, parseInt(document.getElementById('qty').value||'1',10));
-        addToCart({ title: prod.title, price: prod.price, img: prod.img, qty: q });
-      });
-    }
-
-    /* === РОУТЕР (хеш-навигация) === */
-    function router(){
-      const h = location.hash.replace(/^#/,'');
-      if(h.startsWith('/product/')){
-        const slug = decodeURIComponent(h.split('/')[2] || '');
-        renderProduct(slug);
-      } else {
-        renderHome();
-      }
-    }
-    window.addEventListener('hashchange', router);
-
-    // Отправка формы (Formspree вариант — показываем статус)
-    const form = document.getElementById('wholesale-form');
-    const statusEl = document.getElementById('form-status');
-    form.addEventListener('submit', async (e) => {
-      if(form.action.includes('formspree.io') && form.action.includes('your-endpoint')){
-        alert('Замените action формы на ваш Formspree endpoint. Сейчас заявка не будет отправлена.');
-        e.preventDefault();
-        return;
-      }
-      statusEl.textContent = 'Отправляем...';
-      if(form.action.includes('formspree.io')){
-        e.preventDefault();
-        try{
-          const formData = new FormData(form);
-          const res = await fetch(form.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' }});
-          if(res.ok){ statusEl.textContent = 'Готово! Мы получили вашу заявку.'; form.reset(); }
-          else { statusEl.textContent = 'Ошибка отправки. Попробуйте позже или свяжитесь по email.'; }
-        }catch(err){ statusEl.textContent = 'Сетевая ошибка. Проверьте интернет-соединение.'; }
-      }
-    });
-
-    // Клавиша для панели админа
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === '\\'){
-        const panel = document.getElementById('admin-panel');
-        const isVisible = getComputedStyle(panel).display !== 'none';
-        panel.style.display = isVisible ? 'none' : 'block';
-      }
-    });
-
-    // Сохранение быстрых правок в localStorage
-    document.getElementById('save-config').addEventListener('click', ()=>{
-      const next = {
-        ...CONFIG,
-        name: document.getElementById('inp-name').value.trim() || CONFIG.name,
-        tag: document.getElementById('inp-tag').value.trim() || CONFIG.tag,
-        email: document.getElementById('inp-email').value.trim() || CONFIG.email,
-        phone: document.getElementById('inp-phone').value.trim() || CONFIG.phone,
-      };
-      localStorage.setItem('shopConfig', JSON.stringify(next));
-      location.reload();
-    });
-
-    // Год и корзина
-    document.getElementById('year').textContent = new Date().getFullYear();
-    renderCartBadge();
-
-    // Schema.org (организация)
-    const ld = { "@context":"https://schema.org", "@type":"Organization", "name": CONFIG.name, "url": location.href, "email": CONFIG.email, "telephone": CONFIG.phone };
-    const s = document.createElement('script'); s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
-
-    // Первичный рендер
-    router();
+/* === ИНИЦИАЛИЗАЦИЯ === */
+document.getElementById('year').textContent = new Date().getFullYear();
+renderCartBadge();
+const ld = { "@context":"https://schema.org", "@type":"Organization", "name": CONFIG.name, "url": location.href, "email": CONFIG.email, "telephone": CONFIG.phone };
+const s = document.createElement('script'); s.type='application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+router();
   </script>
 </body>
 </html>
