@@ -1,64 +1,45 @@
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Оптовая заявка — BVB</title>
-  <link rel="icon" href="logo.png">
-  <link rel="stylesheet" href="style.css">
-  <script defer src="common.js"></script>
-</head>
-<body>
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Оптовая заявка — BVB</title>
+<link rel="icon" href="logo.png"><link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head><body>
 <header>
   <div class="container nav">
-    <div class="brand">
-      <a href="index.html"><img src="logo.png" alt="BVB"></a>
-      <div>
-        <h1>BVB</h1>
-        <p class="tag">Официальная страница магазина</p>
-      </div>
-    </div>
-    <div class="nav-actions">
-      <a class="btn" href="index.html#catalog">Каталог</a>
-      <button class="btn icon-btn" id="theme-btn" aria-label="Переключить тему"><span id="theme-icon" class="icon">🌙</span></button>
-      <a class="btn" id="cart-btn" href="#" onclick="openCart();return false;">🧺 <span id="cart-count">0</span></a>
+    <div class="brand"><img src="logo.png" alt="BVB"><div><h1>BVB</h1><div class="small">Оптовая заявка</div></div></div>
+    <div class="actions">
+      <a class="btn secondary" href="index.html#catalog">Каталог</a>
+      <button id="theme-toggle" class="btn icon" aria-label="Сменить тему">🌓</button>
     </div>
   </div>
 </header>
 
 <main class="container">
-  <section class="card pad">
-    <h3 style="margin-top:0">Оптовая заявка</h3>
-    <p class="small">Заполните форму — мы свяжемся с вами в ближайшее время.</p>
-    <form id="w-form">
-      <div class="grid" style="gap:12px">
-        <input name="name" placeholder="Ваше имя" class="card pad" style="grid-column:span 6">
-        <input name="email" type="email" placeholder="Email" class="card pad" style="grid-column:span 6">
-        <input name="phone" placeholder="Телефон" class="card pad" style="grid-column:span 6">
-        <input name="company" placeholder="Компания (опционально)" class="card pad" style="grid-column:span 6">
-        <textarea name="message" placeholder="Товар, объём, сроки" class="card pad" style="grid-column:span 12; min-height:140px"></textarea>
-      </div>
-      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
-        <button class="btn" type="submit">Отправить</button>
-      </div>
-      <div id="w-status" class="small" style="margin-top:8px; color:var(--muted)"></div>
+  <div class="card pad">
+    <h3 style="margin:0 0 10px">Оставить заявку</h3>
+    <form id="f" class="grid" onsubmit="send(event)">
+      <input name="name" placeholder="Ваше имя" required style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
+      <input name="email" type="email" placeholder="Email" required style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
+      <input name="phone" placeholder="Телефон" required style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
+      <input name="company" placeholder="Компания (опционально)" style="grid-column:span 6;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)">
+      <textarea name="message" placeholder="Что нужно и объём..." required style="grid-column:span 12;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text);min-height:120px"></textarea>
+      <div style="grid-column:span 12;display:flex;gap:8px"><button class="btn primary">Отправить</button><span id="st" class="small"></span></div>
     </form>
-  </section>
+  </div>
 </main>
 
-<footer class="container">
-  <div class="small">© <span id="year"></span> BVB</div>
-</footer>
+<footer class="container"><div class="small">© <span id="year"></span> BVB</div></footer>
 
+<script src="common.js"></script>
 <script>
-applyTheme(localStorage.getItem(THEME_KEY)||'light'); updateThemeIcon(); updateCartCount();
-document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+Shop.themeInit();
 document.getElementById('year').textContent = new Date().getFullYear();
-
-document.getElementById('w-form').addEventListener('submit', (e)=>{ e.preventDefault(); 
-  document.getElementById('w-status').textContent = 'Спасибо! Мы получили вашу заявку.'; e.target.reset();
-});
+async function send(e){
+  e.preventDefault();
+  document.getElementById('st').textContent = 'Отправляем...';
+  // Заглушка — подключи Formspree или Telegram здесь
+  setTimeout(()=>document.getElementById('st').textContent='Заявка отправлена (демо).',800);
+}
 </script>
-</body>
-</html>
+</body></html>

@@ -1,82 +1,44 @@
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Админка — BVB</title>
-  <link rel="icon" href="logo.png">
-  <link rel="stylesheet" href="style.css">
-  <script defer src="common.js"></script>
-</head>
-<body>
-<header>
-  <div class="container nav">
-    <div class="brand">
-      <a href="index.html"><img src="logo.png" alt="BVB"></a>
-      <div><h1>BVB</h1><p class="tag">Администрирование</p></div>
-    </div>
-    <div class="nav-actions">
-      <button class="btn icon-btn" id="theme-btn" aria-label="Переключить тему"><span id="theme-icon" class="icon">🌙</span></button>
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — BVB</title>
+<link rel="icon" href="logo.png"><link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head><body>
+<main class="container">
+  <div class="card pad">
+    <h3 style="margin:0 0 10px">Админка (экспорт shopConfig.json)</h3>
+    <div id="login"><input id="pass" type="password" placeholder="Пароль" style="padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)"> <button class="btn primary" onclick="auth()">Войти</button></div>
+    <div id="panel" style="display:none">
+      <textarea id="json" style="width:100%;min-height:360px;padding:12px;border:1px solid var(--accent);border-radius:12px;background:transparent;color:var(--text)"></textarea>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn primary" onclick="download()">Скачать JSON</button>
+        <span class="small">Скачай файл и замени им <b>shopConfig.json</b> в репозитории.</span>
+      </div>
     </div>
   </div>
-</header>
-
-<main class="container">
-  <section class="card pad">
-    <h3 style="margin-top:0">Товары</h3>
-    <div id="items"></div>
-    <button class="btn" id="add">Добавить товар</button>
-
-    <div style="display:flex; gap:8px; margin-top:14px">
-      <button class="btn primary" id="download">Скачать JSON</button>
-    </div>
-    <div class="small" style="margin-top:8px; color:var(--muted)">Скачайте JSON и замените файл <code>shopConfig.json</code> в репозитории.</div>
-  </section>
 </main>
-
 <script>
-applyTheme(localStorage.getItem(THEME_KEY)||'light'); updateThemeIcon();
-document.getElementById('theme-btn').addEventListener('click', toggleTheme);
-
-if(prompt('Пароль админки:')!=='popkop06'){ alert('Неверный пароль'); location.href='index.html'; }
-
-let cfg;
-function renderItems(){
-  const wrap = document.getElementById('items'); wrap.innerHTML='';
-  (cfg.products||[]).forEach((p,i)=>{ 
-    const el = document.createElement('div'); el.className='card pad'; el.style.marginBottom='10px';
-    el.innerHTML = `
-      <div class="grid" style="gap:8px">
-        <input class="card pad" style="grid-column:span 6" value="${p.title||''}" placeholder="Название" data-k="title" data-i="${i}">
-        <input class="card pad" style="grid-column:span 3" value="${p.price||0}" placeholder="Цена" data-k="price" data-i="${i}">
-        <input class="card pad" style="grid-column:span 3" value="${p.tag||''}" placeholder="Бейдж" data-k="tag" data-i="${i}">
-        <input class="card pad" style="grid-column:span 6" value="${p.slug||''}" placeholder="Slug" data-k="slug" data-i="${i}">
-        <input class="card pad" style="grid-column:span 6" value="${p.img||''}" placeholder="Главное фото" data-k="img" data-i="${i}">
-        <textarea class="card pad" style="grid-column:span 12; min-height:90px" placeholder="Описание" data-k="desc" data-i="${i}">${p.desc||''}</textarea>
-      </div>
-      <div style="display:flex; gap:8px; margin-top:8px">
-        <button class="btn" onclick="del(${i})">Удалить</button>
-      </div>`;
-    wrap.appendChild(el);
-  });
-  Array.from(wrap.querySelectorAll('input, textarea')).forEach(inp=>{ 
-    inp.addEventListener('input', (e)=>{
-      const i = +e.target.dataset.i; const k = e.target.dataset.k; let val = e.target.value;
-      if(k==='price') val = +val||val;
-      cfg.products[i][k]=val;
-    });
-  });
+function auth(){
+  if(document.getElementById('pass').value==='popkop06'){
+    document.getElementById('login').style.display='none';
+    document.getElementById('panel').style.display='block';
+    // шаблон
+    document.getElementById('json').value = JSON.stringify({
+      name: "BVB",
+      email: "sales@example.com",
+      phone: "+7 (900) 000-00-00",
+      products: [
+        { title:"Лыжные скрепки Fischer", price:"от 99 ₽", tag:"Хит продаж",
+          img:"IMG_3280.jpeg", desc:"Скрепки для лыж Fischer. Для транспортировки и хранения.", slug:"ski-clips" }
+      ]
+    }, null, 2);
+  }else{ alert('Неверный пароль'); }
 }
-function del(i){ cfg.products.splice(i,1); renderItems(); }
-document.getElementById('add').addEventListener('click', ()=>{ (cfg.products||(cfg.products=[])).push({title:'Новый товар', price:0, desc:'', img:''}); renderItems(); });
-
-loadConfig().then(c=>{ cfg=c; renderItems(); });
-
-document.getElementById('download').addEventListener('click', ()=>{
-  const data = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(cfg,null,2));
-  const a = document.createElement('a'); a.href=data; a.download='shopConfig.json'; a.click();
-});
+function download(){
+  const blob = new Blob([document.getElementById('json').value], {type:'application/json'});
+  const a = Object.assign(document.createElement('a'), {href:URL.createObjectURL(blob), download:'shopConfig.json'});
+  a.click(); URL.revokeObjectURL(a.href);
+}
 </script>
-</body>
-</html>
+</body></html>

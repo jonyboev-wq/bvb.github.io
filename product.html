@@ -1,87 +1,61 @@
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Товар — BVB</title>
-  <link rel="icon" href="logo.png">
-  <link rel="stylesheet" href="style.css">
-  <script defer src="common.js"></script>
-</head>
-<body>
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Товар — BVB</title>
+<link rel="icon" href="logo.png"><link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head><body>
 <header>
   <div class="container nav">
-    <div class="brand">
-      <a href="index.html"><img src="logo.png" alt="BVB"></a>
-      <div>
-        <h1 id="brand-name">BVB</h1>
-        <p class="tag" id="brand-tag">Официальная страница магазина</p>
-      </div>
-    </div>
-    <div class="nav-actions">
-      <a class="btn" href="index.html#catalog">Каталог</a>
-      <a class="btn" href="wholesale.html">Опт</a>
-      <button class="btn icon-btn" id="theme-btn" aria-label="Переключить тему"><span id="theme-icon" class="icon">🌙</span></button>
-      <a class="btn" id="cart-btn" href="#" onclick="openCart();return false;">🧺 <span id="cart-count">0</span></a>
+    <div class="brand"><img src="logo.png" alt="BVB"><div><h1>BVB</h1><div class="small">Карточка товара</div></div></div>
+    <div class="actions">
+      <a class="btn secondary" href="index.html#catalog">Каталог</a>
+      <a class="btn secondary" href="wholesale.html">Опт</a>
+      <button id="theme-toggle" class="btn icon" aria-label="Сменить тему">🌓</button>
+      <a class="btn secondary" id="cart-btn" href="#">🧺 <span id="cart-count">0</span></a>
     </div>
   </div>
 </header>
 
 <main class="container">
-  <section id="product" class="card pad"></section>
+  <article id="view" class="card pad"></article>
 </main>
 
-<footer class="container">
-  <div class="small">© <span id="year"></span> BVB</div>
-</footer>
+<footer class="container"><div class="small">© <span id="year"></span> BVB</div></footer>
 
+<script src="common.js"></script>
 <script>
-applyTheme(localStorage.getItem(THEME_KEY)||'light'); updateThemeIcon(); updateCartCount();
-document.getElementById('theme-btn').addEventListener('click', toggleTheme);
-document.getElementById('year').textContent = new Date().getFullYear();
+(async function(){
+  Shop.themeInit(); Shop.renderCartBadge();
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-function getParam(name){ const u=new URLSearchParams(location.search); return u.get(name)||''; }
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('slug')||'';
+  const cfg = await Shop.loadConfig();
+  const prod = (cfg.products||[]).find(p => (p.slug||Shop.slugify(p.title))===slug);
+  const el = document.getElementById('view');
+  if(!prod){ el.innerHTML='<div class="small">Товар не найден. <a href="index.html#catalog">Вернуться в каталог</a></div>'; return; }
 
-function formatPrice(p){
-  if (typeof p === 'number') return p.toLocaleString('ru-RU') + ' ₽';
-  if (!p) return '';
-  const num = Number(String(p).replace(/[^0-9.,]/g,'').replace(',','.'));
-  return isNaN(num) ? String(p) : num.toLocaleString('ru-RU') + ' ₽';
-}
-
-function render(prod){
-  const el = document.getElementById('product');
-  if(!prod){ el.innerHTML='<p>Товар не найден.</p>'; return; }
-  const gal = (prod.gallery||[]).map(src=>`<img src="${src}" style="width:88px;height:88px;border-radius:10px;border:1px solid var(--border);object-fit:cover">`).join('');
-  const specs = prod.attributes ? Object.entries(prod.attributes).map(([k,v])=>`<div class="small"><b>${k}:</b> ${v}</div>`).join('') : '';
   el.innerHTML = `
-    <div class="grid" style="gap:16px">
-      <div class="card" style="grid-column:span 6; padding:8px; display:grid; place-items:center">
-        <img src="${prod.img||''}" alt="${prod.title||''}" style="width:100%; max-height:420px; object-fit:cover; border-radius:12px; border:1px solid var(--border)">
-        <div style="display:flex; gap:8px; margin-top:10px">${gal}</div>
+    <div class="grid">
+      <div class="card pad" style="grid-column:span 6">
+        <img src="${prod.img}" alt="${prod.title}" style="width:100%;border-radius:12px;border:1px solid var(--accent);object-fit:cover">
       </div>
       <div style="grid-column:span 6">
-        <h2 style="margin-top:0">${prod.title||''}</h2>
-        <div class="tag" style="margin-bottom:8px">${prod.tag||''}</div>
-        <div class="price" style="font-size:22px">${formatPrice(prod.price)}</div>
-        ${prod.oldPrice ? `<div class="small" style="text-decoration:line-through; color:var(--muted)">${formatPrice(prod.oldPrice)}</div>` : ''}
-        <p style="margin:10px 0">${prod.desc||''}</p>
-        ${specs}
-        <div style="display:flex; gap:8px; margin-top:12px">
-          <button class="btn" onclick="addToCart({title:prod.title, price:prod.price, img:prod.img, sku:prod.sku||prod.slug})">В корзину</button>
-          ${prod.avitoUrl ? `<a class="btn" href="${prod.avitoUrl}" target="_blank" rel="noopener">На Авито</a>` : ''}
+        <h2 style="margin-top:0">${prod.title}</h2>
+        <div class="tag">${prod.tag||''}</div>
+        <div class="price" style="margin:10px 0 16px;font-size:18px">${prod.price}</div>
+        <p class="small">${prod.desc||''}</p>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn primary" id="add">В корзину</button>
+          ${prod.avito ? `<a class="btn secondary" target="_blank" href="${prod.avito}">Смотреть на Авито</a>`:''}
         </div>
       </div>
-    </div>`;
-}
-
-loadConfig().then(cfg=>{
-  const slug = getParam('slug');
-  const prod = (cfg.products||[]).find(p=>(p.slug||slugify(p.title))===slug);
-  document.getElementById('brand-name').textContent = cfg.name || 'BVB';
-  render(prod);
-}).catch(err=>{console.error(err); document.getElementById('product').innerHTML='<p>Ошибка загрузки конфигурации.</p>';});
+    </div>
+  `;
+  document.getElementById('add').addEventListener('click',()=>{
+    Shop.addToCart({title:prod.title, price:prod.price, img:prod.img, qty:1});
+  });
+})();
 </script>
-</body>
-</html>
+</body></html>

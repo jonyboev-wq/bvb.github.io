@@ -1,137 +1,105 @@
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BVB — официальный магазин</title>
-  <link rel="icon" href="logo.png">
-  <link rel="stylesheet" href="style.css">
-  <script defer src="common.js"></script>
-</head>
-<body>
+<!doctype html><html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BVB — официальный магазин</title>
+<link rel="icon" href="logo.png">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head><body>
 <header>
   <div class="container nav">
-    <div class="brand">
-      <img src="logo.png" alt="BVB">
-      <div>
-        <h1 id="brand-name">BVB</h1>
-        <p class="tag" id="brand-tag">Официальная страница магазина</p>
-      </div>
-    </div>
-    <div class="nav-actions">
-      <a class="btn" href="#catalog">Каталог</a>
-      <a class="btn" href="wholesale.html">Опт</a>
-      <button class="btn icon-btn" id="theme-btn" aria-label="Переключить тему"><span id="theme-icon" class="icon">🌙</span></button>
-      <a class="btn" id="cart-btn" href="#" onclick="openCart();return false;">🧺 <span id="cart-count">0</span></a>
+    <div class="brand"><img src="logo.png" alt="BVB"><div><h1>BVB</h1><div class="small">Официальная страница магазина</div></div></div>
+    <div class="actions">
+      <a class="btn secondary" href="#catalog">Каталог</a>
+      <a class="btn secondary" href="wholesale.html">Опт</a>
+      <button id="theme-toggle" class="btn icon" aria-label="Сменить тему">🌓</button>
+      <a class="btn secondary" id="cart-btn" href="#">🧺 <span id="cart-count">0</span></a>
     </div>
   </div>
 </header>
 
 <main class="container">
   <section class="hero">
-    <h2 class="title" id="hero-title">Лучшие товары по честным ценам</h2>
-    <p class="subtitle" id="hero-sub">Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
-    <div id="alert" class="alert" style="display:none"></div>
-  </section>
-
-  <section class="card pad">
+    <h2>Лучшие товары по честным ценам</h2>
+    <p class="small">Мы тщательно отбираем ассортимент и отправляем заказы по всей стране. Для оптовых покупателей — специальные условия.</p>
     <div class="socials" id="socials"></div>
   </section>
 
-  <section id="catalog" class="grid" style="margin-top:12px"></section>
+  <section id="catalog" class="grid"></section>
 </main>
 
+<a href="admin.html" class="btn fab icon" title="Админка">⚙️</a>
+
 <footer class="container">
-  <div class="small">© <span id="year"></span> <span id="footer-name">BVB</span>. Все права защищены.</div>
+  <div class="small">© <span id="year"></span> BVB. Все права защищены.</div>
 </footer>
 
-<a class="btn admin-fab" href="admin.html" title="Админка">⚙️</a>
-
+<script src="common.js"></script>
 <script>
-applyTheme(localStorage.getItem(THEME_KEY)||'light'); updateThemeIcon(); updateCartCount();
-document.getElementById('theme-btn').addEventListener('click', toggleTheme);
-document.getElementById('year').textContent = new Date().getFullYear();
+const socials = [
+  {label:'Avito', url:'https://www.avito.ru/brands/i184536091?src=sharing', icon:'🅰️'},
+  {label:'Telegram', url:'https://t.me/bvbvbabab', icon:'✈️'},
+  {label:'WhatsApp', url:'https://wa.me/79831289090', icon:'💬'}
+];
 
-function socialsIcons(name){
-  const map = {
-    telegram: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.036 15.47l-.38 5.36c.54 0 .78-.23 1.06-.51l2.53-2.43 5.26 3.84c.96.53 1.65.25 1.92-.89l3.47-16.27c.31-1.44-.52-2-1.46-1.65L1.05 9.22C-.35 9.78-.32 10.62.81 10.98l5.2 1.62L19.38 5.2c.62-.4 1.18-.18.72.22"/></svg>',
-    whatsapp: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.9A10 10 0 004 18.6L3 22l3.5-.9A10 10 0 1019.9 4L20 3.9zm-8 16a8 8 0 110-16 8 8 0 010 16z"/></svg>',
-    avito: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="7" cy="7" r="3"/><circle cx="16" cy="6" r="2"/><circle cx="18" cy="14" r="3"/><circle cx="8" cy="17" r="2.5"/></svg>'
-  };
-  return map[name]||'';
-}
-
-function formatPrice(p){
-  if (typeof p === 'number') return p.toLocaleString('ru-RU') + ' ₽';
-  if (!p) return '';
-  // try parse number from string
-  const num = Number(String(p).replace(/[^0-9.,]/g,'').replace(',','.'));
-  return isNaN(num) ? String(p) : num.toLocaleString('ru-RU') + ' ₽';
-}
-
-function renderHome(cfg){
-  document.getElementById('brand-name').textContent = cfg.name || 'BVB';
-  document.getElementById('footer-name').textContent = cfg.name || 'BVB';
-  document.getElementById('brand-tag').textContent = cfg.tag || '';
-  document.getElementById('hero-title').textContent = cfg.heroTitle || '';
-  document.getElementById('hero-sub').textContent = cfg.heroSub || '';
-
-  const alertEl = document.getElementById('alert');
-  if(cfg._fromFallback){
-    alertEl.style.display='block';
-    alertEl.textContent = 'shopConfig.json не найден. Добавьте файл в корень репозитория (рядом с index.html).';
-  }
-
-  const socials = document.getElementById('socials'); socials.innerHTML = '';
-  (cfg.socials||[]).forEach(s => { const a = document.createElement('a'); a.href=s.url; a.target='_blank'; a.rel='noopener'; a.innerHTML = socialsIcons(s.icon) + '<span>'+s.label+'</span>'; socials.appendChild(a); });
-
-  const grid = document.getElementById('catalog'); grid.innerHTML = '';
-  (cfg.products||[]).forEach(p => { 
-    const slug = p.slug || slugify(p.title);
-    const card = document.createElement('a'); card.className='card pad product'; card.href = 'product.html?slug='+encodeURIComponent(slug);
-    card.innerHTML = `<img src="${p.img||''}" alt="${p.title||''}"><div><h3>${p.title||''}</h3><div class="tag">${p.tag||''}</div><p class="small" style="margin:6px 0 10px">${p.desc||''}</p><div class="price">${formatPrice(p.price)}</div></div>`;
-    grid.appendChild(card);
+function renderSocials(){
+  const wrap = document.getElementById('socials');
+  wrap.innerHTML='';
+  socials.forEach(s=>{
+    const a=document.createElement('a'); a.href=s.url; a.target="_blank"; a.rel="noopener";
+    a.innerHTML = `<span>${s.icon}</span><span>${s.label}</span>`;
+    wrap.appendChild(a);
   });
 }
 
-// Modal cart
-function openCart(){
-  const cart = getCart();
-  let html = '<div style="max-width:640px;margin:20px auto;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--shadow)">';
-  html += '<h3 style="margin-top:0">Корзина</h3>';
-  if(!cart.length){ html+='<p>Корзина пуста.</p>'; } else { 
-    let total=0;
-    cart.forEach((it,i)=>{ 
-      const priceNum = Number(String(it.price).replace(/[^0-9.,]/g,'').replace(',','.')) || 0;
-      const sum = priceNum*(it.qty||1); total+=sum;
-      html += `<div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);padding:10px 0">
-        <img src="${it.img||''}" style="width:64px;height:64px;border-radius:10px;object-fit:cover;border:1px solid var(--border)}">
-        <div style="flex:1;min-width:0"><div><b>${it.title||''}</b></div><div class="small">${formatPrice(it.price)} × ${it.qty||1}</div></div>
-        <button class="btn" onclick="removeItem(${i})">×</button>
-      </div>`;
+async function renderCatalog(){
+  try{
+    const cfg = await Shop.loadConfig();
+    const grid = document.getElementById('catalog');
+    grid.innerHTML='';
+    (cfg.products||[]).forEach(p=>{
+      const slug = p.slug || Shop.slugify(p.title);
+      const card = document.createElement('article');
+      card.className='card pad product';
+      card.innerHTML = `
+        <img src="${p.img}" alt="${p.title}">
+        <div class="meta">
+          <h3>${p.title}</h3>
+          <div class="tag">${p.tag||''}</div>
+          <p class="small" style="margin:6px 0 10px">${p.desc||''}</p>
+          <div class="price">${p.price}</div>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn primary add">В корзину</button>
+            <a class="btn secondary more" href="product.html?slug=${encodeURIComponent(slug)}">Подробнее</a>
+          </div>
+        </div>
+      `;
+      // целиком кликабельно, кроме кнопок
+      card.addEventListener('click', (e)=>{
+        if(e.target.closest('.add')||e.target.closest('.more')) return;
+        location.href = 'product.html?slug='+encodeURIComponent(slug);
+      });
+      card.querySelector('.add').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        Shop.addToCart({title:p.title, price:p.price, img:p.img, qty:1});
+      });
+      grid.appendChild(card);
     });
-    html += `<div style="text-align:right;margin-top:10px"><b>Итого: ${formatPrice(total)}</b></div>`;
+  }catch(err){
+    const grid = document.getElementById('catalog');
+    grid.innerHTML = `<div class="card pad small">Не удалось загрузить товары. Убедитесь, что файл <b>shopConfig.json</b> лежит в корне репозитория и содержит корректный JSON.</div>`;
   }
-  html += '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">    <button class="btn" onclick="closeModal()">Закрыть</button>    <button class="btn primary" onclick="checkout()">Оформить заказ</button>  </div></div>';
-  showModal(html);
 }
-function removeItem(i){ const c=getCart(); c.splice(i,1); saveCart(c); closeModal(); openCart(); }
 
-let modalWrap;
-function showModal(inner){
-  closeModal();
-  modalWrap = document.createElement('div');
-  modalWrap.style = "position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;z-index:50;padding:16px";
-  modalWrap.innerHTML = inner;
-  modalWrap.addEventListener('click', (e)=>{ if(e.target===modalWrap) closeModal(); });
-  document.body.appendChild(modalWrap);
-}
-function closeModal(){ if(modalWrap){ modalWrap.remove(); modalWrap=null; } }
+document.getElementById('cart-btn').addEventListener('click', (e)=>{
+  e.preventDefault();
+  alert('Демо-корзина: товаров в корзине — '+Shop.countCart()+'. (Телеграм-оформление можно вернуть позже)');
+});
 
-function checkout(){ alert('Заказ принят! Мы свяжемся с вами.'); closeModal(); saveCart([]); updateCartCount(); }
-
-loadConfig().then(cfg=>renderHome(cfg)).catch(err=>{console.error(err); document.getElementById('alert').style.display='block'; document.getElementById('alert').textContent='Ошибка загрузки конфигурации.';});
+document.getElementById('year').textContent = new Date().getFullYear();
+Shop.themeInit();
+Shop.renderCartBadge();
+renderSocials();
+renderCatalog();
 </script>
-</body>
-</html>
+</body></html>
