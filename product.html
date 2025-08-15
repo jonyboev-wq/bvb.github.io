@@ -69,7 +69,9 @@
     .old{color:var(--muted);text-decoration:line-through;margin-left:8px;font-weight:600}
     .badge{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;border:1px dashed var(--border);font-size:12px;color:var(--muted)}
     .gallery{display:grid;grid-template-columns:1fr;gap:12px}
-    .hero{width:100%;aspect-ratio:1/1;border-radius:12px;border:1px solid var(--border);object-fit:cover;background:#0a1016}
+    .hero-wrap{position:relative;width:100%;aspect-ratio:1/1;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--bg);--img:''}
+    .hero-wrap::before{content:'';position:absolute;inset:0;background-image:var(--img);background-size:cover;background-position:center;filter:blur(20px);transform:scale(1.1)}
+    .hero{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:1}
     .thumbs{display:flex;gap:8px;flex-wrap:wrap}
     .thumbs img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:2px solid transparent;cursor:pointer}
     .thumbs img.active{border-color:var(--btn)}
@@ -136,7 +138,9 @@
       document.getElementById('app').innerHTML = `
         <div class="grid">
           <section class="card pad gallery">
-            <img id="hero" class="hero" src="${hero}" alt="${p.title}">
+            <div id="heroWrap" class="hero-wrap" style="--img:url(${hero})">
+              <img id="hero" class="hero" src="${hero}" alt="${p.title}">
+            </div>
             <div class="thumbs" id="thumbs">${gallery}</div>
           </section>
           <section class="card pad">
@@ -155,11 +159,13 @@
         </div>
       `;
       const heroEl = document.getElementById('hero');
+      const heroWrap = document.getElementById('heroWrap');
       const thumbs = document.getElementById('thumbs');
       thumbs?.addEventListener('click', (e)=>{
         const t = e.target;
-        if(t.tagName==='IMG'){ 
+        if(t.tagName==='IMG'){
           heroEl.src = t.src;
+          heroWrap.style.setProperty('--img', `url(${t.src})`);
           [...thumbs.children].forEach(x=>x.classList.remove('active'));
           t.classList.add('active');
         }

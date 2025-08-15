@@ -129,7 +129,9 @@ function renderGrid(items){
     const card=el(`
       <article class="card">
         <a href="product.html?slug=${encodeURIComponent(p.slug || slugify(p.title))}">
-          <img class="card-img" src="${(p.images&&p.images[0])||''}" alt="${p.title}" loading="lazy">
+          <div class="card-img" style="--img:url('${(p.images&&p.images[0])||''}')">
+            <img src="${(p.images&&p.images[0])||''}" alt="${p.title}" loading="lazy">
+          </div>
           <div class="card-pad">
             <h3 style="margin:0 0 6px">${p.title}</h3>
             ${p.tag? `<div class="badge">${p.tag}</div>`:''}

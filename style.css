@@ -82,7 +82,9 @@ header{
 }
 .card a{text-decoration:none;color:inherit}
 
-.card-img{width:100%;aspect-ratio:16/11;object-fit:cover;background:#000}
+.card-img{position:relative;width:100%;aspect-ratio:16/11;overflow:hidden;background:var(--bg);--img:''}
+.card-img::before{content:'';position:absolute;inset:0;background-image:var(--img);background-size:cover;background-position:center;filter:blur(20px);transform:scale(1.1)}
+.card-img img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain}
 .card-pad{padding:14px}
 .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;
   padding:6px 10px;border:1px dashed var(--border);border-radius:999px;color:var(--muted)}
