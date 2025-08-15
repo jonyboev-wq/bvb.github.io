@@ -9,24 +9,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
+      --bg:#ffffff;
+      --card:#f6f8fa;
+      --muted:#5b6b7b;
+      --text:#0f1720;
+      --accent:#0b57d0;
+      --border:#e5e7eb;
+      --radius:16px;
+      --maxw:1100px;
+    }
+    [data-theme="dark"]{
       --bg:#0b0f14;
       --card:#11161d;
       --muted:#95a1af;
       --text:#eaf0f6;
       --accent:#2f81f7;
       --border:#1b2530;
-      --radius:16px;
-      --maxw:1100px;
-    }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#ffffff;
-        --card:#f6f8fa;
-        --muted:#5b6b7b;
-        --text:#0f1720;
-        --accent:#0b57d0;
-        --border:#e5e7eb;
-      }
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
@@ -40,6 +38,7 @@
     header{position:sticky;top:0;z-index:5;background:rgba(0,0,0,.25);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
     .row{display:flex;gap:12px;align-items:center;justify-content:space-between}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));cursor:pointer;text-decoration:none;color:var(--text)}
+    .btn.icon{width:40px;height:40px;padding:0}
     .btn.primary{background:linear-gradient(180deg,var(--accent),#0d4bd7);color:#fff;border:none}
     .btn:hover{transform:translateY(-1px)}
     .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));border:1px solid var(--border);border-radius:var(--radius)}
@@ -66,6 +65,7 @@
       <div class="row" style="gap:10px">
         <a class="btn" href="index.html">Каталог</a>
         <a class="btn" href="wholesale.html">Опт</a>
+        <button class="btn icon" id="themeToggle" aria-label="Переключить тему">🌙</button>
       </div>
       <a class="btn" href="javascript:history.back()">← Назад</a>
     </div>
@@ -76,6 +76,19 @@
   </main>
 
   <script>
+    (function(){
+      const saved = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      const b = document.getElementById('themeToggle');
+      b.textContent = saved === 'dark' ? '☀️' : '🌙';
+      b.addEventListener('click',()=>{
+        const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', cur);
+        localStorage.setItem('theme', cur);
+        b.textContent = cur === 'dark' ? '☀️' : '🌙';
+      });
+    })();
+
     async function loadConfig(){
       try{
         const res = await fetch('shopConfig.json', {cache:'no-cache'});
