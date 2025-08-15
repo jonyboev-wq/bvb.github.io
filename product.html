@@ -56,7 +56,13 @@
     .btn:hover{transform:translateY(-1px)}
     .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));border:1px solid var(--border);border-radius:var(--radius)}
     .pad{padding:16px}
-    .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+    .grid{display:grid;grid-template-columns:1fr;gap:16px}
+    .desc-desktop{display:none}
+    @media (min-width:841px){
+      .grid{grid-template-columns:1.1fr 1fr}
+      .desc-desktop{display:block;grid-column:1/-1}
+      .desc-mobile{display:none}
+    }
     .title{margin:0 0 6px}
     .muted{color:var(--muted)}
     .price{font-size:28px;font-weight:800}
@@ -69,7 +75,6 @@
     .thumbs img.active{border-color:var(--btn)}
     .desc{white-space:pre-wrap}
     .empty{padding:24px;border:1px dashed var(--border);border-radius:12px;text-align:center;color:var(--muted)}
-    @media (max-width: 840px){ .grid{grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -127,6 +132,7 @@
       const old = (p.oldPrice && p.oldPrice>p.price) ? '<span class="old">'+p.oldPrice+' '+(p.currency||'₽')+'</span>' : '';
       const tag = p.tag ? '<span class="badge">'+p.tag+'</span>' : '';
       const stock = p.stock ? '<span class="badge">'+p.stock+'</span>' : '';
+      const description = (p.description||'').replaceAll('\n','<br>');
       document.getElementById('app').innerHTML = `
         <div class="grid">
           <section class="card pad gallery">
@@ -139,12 +145,13 @@
             <div style="display:flex;gap:8px;margin:10px 0 14px">${tag}${stock}</div>
             <div class="price">${p.price} ${(p.currency||'₽')}${old}</div>
             <p class="muted" style="margin:6px 0 14px">${p.short||''}</p>
-            <div class="desc">${(p.description||'').replaceAll('\n','<br>')}</div>
+            <div class="desc desc-mobile">${description}</div>
             <div style="display:flex;gap:10px;margin-top:16px">
               ${p.avitoUrl ? '<a class="btn primary" target="_blank" rel="noopener" href="'+p.avitoUrl+'">Открыть на Avito</a>' : ''}
               <a class="btn" href="index.html">Назад к каталогу</a>
             </div>
           </section>
+          <section class="card pad desc desc-desktop">${description}</section>
         </div>
       `;
       const heroEl = document.getElementById('hero');
