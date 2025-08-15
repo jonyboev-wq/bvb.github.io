@@ -50,8 +50,7 @@ header{
 
 .nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:10px}
-.brand-logo{width:40px;height:40px;border-radius:12px;background:#000;color:#fff;display:grid;place-items:center;font-weight:800;letter-spacing:1px}
-.brand h1{font-size:18px;margin:0;color:var(--brand)}
+.brand-logo{width:40px;height:40px;border-radius:12px;display:block;object-fit:cover}
 .brand small{display:block;color:var(--muted)}
 
 .nav-actions{display:flex;gap:8px;align-items:center}
