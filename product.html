@@ -50,6 +50,7 @@
     }
     [data-theme="dark"] header{background:rgba(11,13,18,.6);}
     .row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .nav-actions{display:flex;gap:8px;align-items:center}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--btnGhostBg);color:var(--btnGhostText);cursor:pointer;text-decoration:none}
     .btn.icon{width:40px;height:40px;padding:0}
     .btn.primary{background:var(--btn);border-color:var(--btn);color:var(--btnText)}
@@ -72,7 +73,8 @@
     .hero-wrap{position:relative;width:100%;aspect-ratio:1/1;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--bg);--img:''}
     .hero-wrap::before{content:'';position:absolute;inset:0;background-image:var(--img);background-size:cover;background-position:center;filter:blur(20px);transform:scale(1.1)}
     .hero{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:1}
-    .nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--btnGhostBg);color:var(--btnGhostText);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;opacity:.9}
+    .nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:rgba(255,255,255,.6);backdrop-filter:saturate(140%) blur(12px);color:var(--btnGhostText);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+    [data-theme="dark"] .nav{background:rgba(11,13,18,.6);}
     .nav.prev{left:8px}
     .nav.next{right:8px}
     .nav:hover{background:var(--btn);border-color:var(--btn);color:var(--btnText)}
@@ -86,12 +88,12 @@
 <body>
   <header>
     <div class="container row">
-      <div class="row" style="gap:10px">
+      <a class="btn" href="javascript:history.back()">← Назад</a>
+      <div class="nav-actions">
         <a class="btn" href="index.html">Каталог</a>
         <a class="btn" href="wholesale.html">Опт</a>
         <button class="btn icon" id="themeToggle" aria-label="Переключить тему">🌙</button>
       </div>
-      <a class="btn" href="javascript:history.back()">← Назад</a>
     </div>
   </header>
 
