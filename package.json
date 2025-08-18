@@ -1,0 +1,9 @@
+{
+  "name": "bvb.github.io",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BVB static site",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  }
+}
