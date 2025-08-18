@@ -1,4 +1,9 @@
 {
+  "socials": [
+    {"label": "Avito", "url": "https://www.avito.ru/", "icon": "avito"},
+    {"label": "Telegram", "url": "https://t.me/bvbvbabab", "icon": "tg"},
+    {"label": "WhatsApp", "url": "https://wa.me/79831289090", "icon": "wa"}
+  ],
   "products": [
     {
       "title": "1 пара лыжных скрепок для гоночных лыж",
