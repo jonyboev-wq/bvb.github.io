@@ -46,21 +46,26 @@
       "avitoUrl": "https://www.avito.ru/moskva/sport_i_otdyh/proizvodstvo_lyzhnyh_termобаков_7320723919"
     },
     {
-      "title": "Стул складной туристический",
-      "slug": "folding-chair",
-      "price": 1590,
-      "oldPrice": 1990,
-      "currency": "₽",
-      "tag": "Летняя акция",
-      "category": "туризм",
-      "stock": "в наличии",
+      "title": "Темляк для лыжных палок",
+      "slug": "temlyak-swix",
+      "price": 2.8,
+      "oldPrice": 4.2,
+      "currency": "USD",
+      "tag": "опт",
+      "category": "аксессуары",
+      "stock": "под заказ",
       "available": true,
       "images": [
-        "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=1600&auto=format&fit=crop"
+        "img/temlyak_swix_1.jpg",
+        "img/temlyak_swix_2.jpg",
+        "img/temlyak_swix_3.jpg",
+        "img/temlyak_swix_4.jpg",
+        "img/temlyak_swix_5.jpg",
+        "img/temlyak_swix_6.jpg"
       ],
-      "short": "Лёгкий стул для походов и рыбалки.",
-      "description": "Складывается за секунды.\nДержит до 100 кг.",
-      "avitoUrl": "https://www.avito.ru/folding-chair"
+      "short": "Регулируемый неопреновый темляк для лыжных палок.",
+      "description": "Материал: крюк-петля + нейлоновая стропа/неопрен. Цвет и размер на заказ. Сертификация BSCI SGS. Минимальный заказ 500 пар. Подходит для зимних видов спорта. Прочный, возможна печать логотипа.",
+      "avitoUrl": "https://www.alibaba.com/product-detail/Trade-Assurance-Wholesale-High-Quality-Ski_60775697864.html"
     },
     {
       "title": "Смарт-чашка с подогревом",
