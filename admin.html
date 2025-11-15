@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — BVB</title>
+<link rel="icon" href="logo.png">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  body{min-height:100vh;padding-bottom:60px}
+  .pad{padding:20px}
+  .editor-grid{display:flex;flex-direction:column;gap:24px;margin-top:16px}
+  .edit-card{border:1px solid var(--border);border-radius:18px;padding:20px;background:var(--card);box-shadow:var(--shadow)}
+  .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .section-head h3{margin:0}
+  .small-note{font-size:13px;color:var(--muted)}
+  label{font-size:13px;color:var(--muted);display:grid;gap:6px}
+  input,textarea,select{
+    border:1px solid var(--border);border-radius:12px;background:transparent;
+    padding:10px 12px;color:var(--text);font:inherit;width:100%;
+  }
+  textarea{min-height:110px;resize:vertical}
+  .tall{min-height:160px}
+  .json-area{min-height:220px}
+  .list-empty{padding:20px;border:1px dashed var(--border);border-radius:14px;text-align:center;color:var(--muted)}
+  .admin-grid{margin-top:18px}
+  .admin-grid .card{cursor:pointer;transition:.2s ease}
+  .admin-grid .card:hover{transform:translateY(-4px)}
+  .admin-grid .card button{cursor:pointer}
+  .admin-grid .card-actions{border-top:1px solid var(--border)}
+  .card-mini{display:flex;flex-direction:column;gap:12px}
+  .card-mini img{width:100%;height:200px;border-radius:14px;object-fit:cover;border:1px solid var(--border)}
+  .detail-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .detail-form{display:grid;gap:12px}
+  .detail-form.two-cols{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .checkbox{display:flex;align-items:center;gap:8px;color:var(--muted)}
+  .checkbox input{width:auto}
+  .product-preview{margin-top:16px;border:1px dashed var(--border);border-radius:16px;padding:14px}
+  .btn.danger{border-color:#e44d4d;color:#e44d4d}
+  .btn.danger:hover{background:#e44d4d;color:#fff}
+  .btn.ghost{border-style:dashed}
+</style>
+</head>
+<body>
+<main class="container">
+  <div class="card pad">
+    <h2 style="margin:0 0 8px">Редактор карточек</h2>
+    <p class="muted" style="margin:0 0 16px">Введите пароль, чтобы загрузить текущий <b>shopConfig.json</b> и редактировать товары и соцсети прямо в интерфейсе.</p>
+    <div id="login" style="display:flex;gap:10px;flex-wrap:wrap">
+      <input id="pass" type="password" placeholder="Пароль (popkop06)">
+      <button class="btn primary" onclick="auth()">Войти</button>
+    </div>
+  </div>
+
+  <div id="panel" class="editor-grid" style="display:none">
+    <div class="edit-card">
+      <div class="section-head">
+        <div>
+          <h3>Соцсети</h3>
+          <div class="small-note">Добавьте ссылки на Avito, Telegram, WhatsApp и т.д.</div>
+        </div>
+        <button class="btn small" id="addSocial">+ Добавить соцсеть</button>
+      </div>
+      <div id="socialList" class="detail-form" style="margin-top:16px"></div>
+    </div>
+
+    <div class="edit-card">
+      <div class="section-head">
+        <div>
+          <h3>Товары</h3>
+          <div class="small-note">Сначала появится сетка карточек как на главной. Нажмите карточку, чтобы открыть детали.</div>
+        </div>
+        <button class="btn small primary" id="addProduct">+ Добавить товар</button>
+      </div>
+
+      <div id="productListView">
+        <div id="productGrid" class="grid admin-grid"></div>
+      </div>
+
+      <div id="productDetailView" style="display:none">
+        <div class="detail-head">
+          <button class="btn" id="backToList">← К списку карточек</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" id="duplicateProduct">Дублировать</button>
+            <button class="btn danger" id="deleteProduct">Удалить</button>
+          </div>
+        </div>
+        <div style="margin-bottom:10px">
+          <h3 id="detailTitle" style="margin:0 0 6px">Карточка</h3>
+          <div class="small-note" id="detailSlug">slug: —</div>
+        </div>
+        <div class="detail-form two-cols">
+          <label>Название
+            <input id="field-title">
+          </label>
+          <label>Slug (если оставить пустым, создастся автоматически)
+            <input id="field-slug">
+          </label>
+          <label>Цена
+            <input id="field-price" inputmode="decimal">
+          </label>
+          <label>Старая цена
+            <input id="field-oldPrice" inputmode="decimal">
+          </label>
+          <label>Валюта
+            <input id="field-currency" value="₽">
+          </label>
+          <label>Тег/бейдж
+            <input id="field-tag">
+          </label>
+          <label>Категория
+            <input id="field-category">
+          </label>
+          <label>Статус склада
+            <input id="field-stock">
+          </label>
+          <label>Ссылка на Avito
+            <input id="field-avitoUrl">
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" id="field-available">
+            В наличии / показывать в каталоге
+          </label>
+        </div>
+        <label style="display:block;margin-top:16px">Краткое описание (каталог)
+          <textarea id="field-summary"></textarea>
+        </label>
+        <label style="display:block;margin-top:10px">Описание на странице товара
+          <textarea id="field-description" class="tall"></textarea>
+        </label>
+        <label style="display:block;margin-top:10px">Ссылки на изображения (каждое с новой строки)
+          <textarea id="field-images" class="tall"></textarea>
+        </label>
+        <div class="product-preview" id="detailPreview"></div>
+      </div>
+    </div>
+
+    <div class="edit-card">
+      <div class="section-head">
+        <div>
+          <h3>Экспорт JSON</h3>
+          <div class="small-note">После правок скачайте файл и замените им <b>shopConfig.json</b> в репозитории.</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn primary" onclick="download()">Скачать JSON</button>
+          <button class="btn" onclick="load()">Подтянуть с сайта</button>
+          <label class="btn ghost" style="cursor:pointer">
+            Импорт JSON<input id="file" type="file" accept="application/json" style="display:none" onchange="imp()">
+          </label>
+        </div>
+      </div>
+      <textarea id="json" class="json-area" spellcheck="false"></textarea>
+    </div>
+  </div>
+</main>
+
+<datalist id="icon-options">
+  <option value="avito">
+  <option value="tg">
+  <option value="wa">
+  <option value="telegram">
+  <option value="whatsapp">
+</datalist>
+
+<script>
+const PASSWORD = 'popkop06';
+const state = { socials: [], products: [] };
+let currentIndex = null;
+
+const panel = document.getElementById('panel');
+const socialList = document.getElementById('socialList');
+const productGrid = document.getElementById('productGrid');
+const productListView = document.getElementById('productListView');
+const productDetailView = document.getElementById('productDetailView');
+const jsonArea = document.getElementById('json');
+
+const detailFields = {
+  title: document.getElementById('field-title'),
+  slug: document.getElementById('field-slug'),
+  price: document.getElementById('field-price'),
+  oldPrice: document.getElementById('field-oldPrice'),
+  currency: document.getElementById('field-currency'),
+  tag: document.getElementById('field-tag'),
+  category: document.getElementById('field-category'),
+  stock: document.getElementById('field-stock'),
+  avitoUrl: document.getElementById('field-avitoUrl'),
+  summary: document.getElementById('field-summary'),
+  description: document.getElementById('field-description'),
+  images: document.getElementById('field-images'),
+  available: document.getElementById('field-available')
+};
+const detailTitle = document.getElementById('detailTitle');
+const detailSlug = document.getElementById('detailSlug');
+const detailPreview = document.getElementById('detailPreview');
+
+document.getElementById('addSocial').addEventListener('click', ()=>{
+  state.socials.push(normalizeSocial());
+  renderSocials();
+  syncJSON();
+});
+document.getElementById('addProduct').addEventListener('click', ()=>{
+  state.products.push(normalizeProduct());
+  renderProductGrid();
+  openProductDetail(state.products.length - 1);
+  syncJSON();
+});
+document.getElementById('backToList').addEventListener('click', closeProductDetail);
+document.getElementById('deleteProduct').addEventListener('click', deleteCurrentProduct);
+document.getElementById('duplicateProduct').addEventListener('click', duplicateCurrentProduct);
+
+function auth(){
+  if(document.getElementById('pass').value.trim() === PASSWORD){
+    document.getElementById('login').style.display = 'none';
+    panel.style.display = 'flex';
+    load();
+  }else{
+    alert('Неверный пароль');
+  }
+}
+
+function normalizeSocial(s={}){
+  return {
+    label: s.label || '',
+    url: s.url || '',
+    icon: s.icon || ''
+  };
+}
+
+function normalizeProduct(p={}){
+  return {
+    title: p.title || '',
+    slug: p.slug || '',
+    price: valueToString(p.price),
+    oldPrice: valueToString(p.oldPrice),
+    currency: p.currency || '₽',
+    tag: p.tag || '',
+    category: p.category || '',
+    stock: p.stock || '',
+    available: p.available !== false,
+    summary: p.short || p.desc || p.summary || '',
+    description: p.description || '',
+    avitoUrl: p.avitoUrl || '',
+    images: Array.isArray(p.images) ? p.images.slice() : []
+  };
+}
+
+function valueToString(v){
+  if(v === null || v === undefined) return '';
+  return String(v);
+}
+
+function setState(data){
+  state.socials = Array.isArray(data.socials) ? data.socials.map(normalizeSocial) : [];
+  state.products = Array.isArray(data.products) ? data.products.map(normalizeProduct) : [];
+  renderSocials();
+  renderProductGrid();
+  closeProductDetail();
+  syncJSON();
+}
+
+async function load(){
+  try{
+    const r = await fetch('shopConfig.json', {cache:'no-cache'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data = await r.json();
+    setState(data);
+  }catch(e){
+    alert('Не удалось загрузить shopConfig.json. Проверьте, что файл доступен на сервере.');
+    setState({socials:[], products:[]});
+  }
+}
+
+function download(){
+  syncJSON();
+  const blob = new Blob([jsonArea.value], {type:'application/json'});
+  const a = Object.assign(document.createElement('a'), {href:URL.createObjectURL(blob), download:'shopConfig.json'});
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function imp(){
+  const file = document.getElementById('file').files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      setState(data);
+    }catch(err){
+      alert('Не получилось разобрать JSON: '+err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function slugify(str){
+  return (str||'').toString().trim().toLowerCase()
+    .replace(/[^a-z0-9а-яё-\s]/gi,'').replace(/\s+/g,'-');
+}
+
+function escapeHTML(str=''){
+  return str.replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+}
+
+function renderSocials(){
+  if(!state.socials.length){
+    socialList.innerHTML = '<div class="list-empty">Нет соцсетей. Нажмите «Добавить».</div>';
+    return;
+  }
+  socialList.innerHTML = state.socials.map((s,i)=>`
+    <div class="edit-card" style="border:none;padding:0;box-shadow:none;background:transparent">
+      <div class="section-head" style="margin-bottom:8px">
+        <strong>Соцсеть ${i+1}</strong>
+        <button class="btn small danger" data-remove-social="${i}">Удалить</button>
+      </div>
+      <div class="detail-form two-cols">
+        <label>Название
+          <input data-soc-field="label" data-index="${i}" value="${escapeHTML(s.label)}">
+        </label>
+        <label>Ссылка
+          <input type="url" data-soc-field="url" data-index="${i}" value="${escapeHTML(s.url)}">
+        </label>
+        <label>Иконка (avito, tg, wa…)
+          <input list="icon-options" data-soc-field="icon" data-index="${i}" value="${escapeHTML(s.icon)}">
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderProductGrid(){
+  if(!state.products.length){
+    productGrid.innerHTML = '<div class="list-empty">Пока нет товаров. Нажмите «Добавить товар».</div>';
+    return;
+  }
+  productGrid.innerHTML = state.products.map((p,i)=>productCardHTML(p,i)).join('');
+}
+
+function productCardHTML(p,i){
+  const img = (p.images && p.images[0]) || 'https://via.placeholder.com/400x300?text=Фото';
+  const tag = p.tag ? `<div class="badge">${escapeHTML(p.tag)}</div>` : '';
+  const summary = p.summary || p.description || '';
+  const price = p.price ? `${escapeHTML(p.price)} ${escapeHTML(p.currency || '₽')}` : '—';
+  return `
+    <article class="card" data-edit="${i}">
+      <div class="card-img">
+        <img src="${escapeHTML(img)}" alt="">
+      </div>
+      <div class="card-pad">
+        <h3 style="margin:0 0 6px">${escapeHTML(p.title || 'Без названия')}</h3>
+        ${tag}
+        <p class="muted" style="margin:8px 0 0">${escapeHTML(summary)}</p>
+        <div class="price" style="margin-top:10px">${price}</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn small primary" data-edit="${i}">Редактировать</button>
+        <button class="btn small" data-duplicate="${i}">Дублировать</button>
+      </div>
+    </article>
+  `;
+}
+
+function openProductDetail(index){
+  if(index < 0 || index >= state.products.length) return;
+  currentIndex = index;
+  const p = state.products[index];
+  productListView.style.display = 'none';
+  productDetailView.style.display = 'block';
+  detailTitle.textContent = p.title || 'Новая карточка';
+  detailSlug.textContent = 'slug: ' + ((p.slug || slugify(p.title)) || '—');
+  detailFields.title.value = p.title;
+  detailFields.slug.value = p.slug;
+  detailFields.price.value = p.price;
+  detailFields.oldPrice.value = p.oldPrice;
+  detailFields.currency.value = p.currency;
+  detailFields.tag.value = p.tag;
+  detailFields.category.value = p.category;
+  detailFields.stock.value = p.stock;
+  detailFields.avitoUrl.value = p.avitoUrl;
+  detailFields.summary.value = p.summary;
+  detailFields.description.value = p.description;
+  detailFields.images.value = (p.images || []).join('\n');
+  detailFields.available.checked = p.available !== false;
+  updateDetailPreview();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function closeProductDetail(){
+  currentIndex = null;
+  productDetailView.style.display = 'none';
+  productListView.style.display = 'block';
+}
+
+function deleteCurrentProduct(){
+  if(currentIndex === null) return;
+  if(confirm('Удалить этот товар?')){
+    state.products.splice(currentIndex,1);
+    renderProductGrid();
+    closeProductDetail();
+    syncJSON();
+  }
+}
+
+function duplicateCurrentProduct(){
+  if(currentIndex === null) return;
+  const clone = JSON.parse(JSON.stringify(state.products[currentIndex]));
+  clone.title = (clone.title || 'Карточка') + ' (копия)';
+  state.products.splice(currentIndex+1, 0, clone);
+  renderProductGrid();
+  openProductDetail(currentIndex+1);
+  syncJSON();
+}
+
+function productPreview(p){
+  const img = (p.images && p.images[0]) || 'https://via.placeholder.com/400x300?text=Фото';
+  const price = p.price ? `${p.price} ${p.currency || '₽'}` : '—';
+  return `
+    <div class="card card-mini">
+      <img src="${escapeHTML(img)}" alt="">
+      <div>
+        <h4 style="margin:0 0 6px">${escapeHTML(p.title || 'Название')}</h4>
+        ${p.tag ? `<div class="badge">${escapeHTML(p.tag)}</div>` : ''}
+        <p class="muted" style="margin:8px 0">${escapeHTML(p.summary || p.description || '')}</p>
+        <div class="price">${escapeHTML(price)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function updateDetailPreview(){
+  if(currentIndex === null) return;
+  const p = state.products[currentIndex];
+  detailPreview.innerHTML = productPreview(p);
+  detailTitle.textContent = p.title || 'Новая карточка';
+  detailSlug.textContent = 'slug: ' + ((p.slug || slugify(p.title)) || '—');
+}
+
+function syncJSON(){
+  const data = {
+    socials: state.socials.map(s=>({
+      label: s.label || '',
+      url: s.url || '',
+      icon: s.icon || ''
+    })),
+    products: state.products.map(p=>{
+      const summary = p.summary || '';
+      const prod = {
+        title: p.title || '',
+        slug: (p.slug || slugify(p.title || '')) || '',
+        currency: p.currency || '₽',
+        tag: p.tag || '',
+        category: p.category || '',
+        stock: p.stock || '',
+        available: p.available !== false,
+        short: summary,
+        desc: summary,
+        description: p.description || '',
+        avitoUrl: p.avitoUrl || '',
+        images: (p.images || []).filter(Boolean)
+      };
+      const price = toNumber(p.price);
+      if(price !== undefined) prod.price = price;
+      const oldPrice = toNumber(p.oldPrice);
+      if(oldPrice !== undefined) prod.oldPrice = oldPrice;
+      if(!prod.images.length) delete prod.images;
+      if(!prod.avitoUrl) delete prod.avitoUrl;
+      if(!summary){ delete prod.short; delete prod.desc; }
+      if(!prod.description) delete prod.description;
+      if(!prod.tag) delete prod.tag;
+      if(!prod.category) delete prod.category;
+      if(!prod.stock) delete prod.stock;
+      if(!prod.currency) delete prod.currency;
+      return prod;
+    })
+  };
+  jsonArea.value = JSON.stringify(data, null, 2);
+}
+
+function toNumber(val){
+  if(val === '' || val === null || val === undefined) return undefined;
+  const n = Number(String(val).replace(',','.'));
+  return Number.isFinite(n) ? n : undefined;
+}
+
+productGrid.addEventListener('click', e=>{
+  const edit = e.target.closest('[data-edit]');
+  if(edit){
+    openProductDetail(Number(edit.dataset.edit));
+    return;
+  }
+  const dup = e.target.closest('[data-duplicate]');
+  if(dup){
+    const idx = Number(dup.dataset.duplicate);
+    const clone = JSON.parse(JSON.stringify(state.products[idx]));
+    clone.title = (clone.title || 'Карточка') + ' (копия)';
+    state.products.splice(idx+1,0,clone);
+    renderProductGrid();
+    syncJSON();
+  }
+});
+
+socialList.addEventListener('input', e=>{
+  const field = e.target.dataset.socField;
+  if(!field) return;
+  const index = Number(e.target.dataset.index);
+  state.socials[index][field] = e.target.value;
+  syncJSON();
+});
+socialList.addEventListener('click', e=>{
+  const remove = e.target.dataset.removeSocial;
+  if(remove !== undefined){
+    state.socials.splice(Number(remove), 1);
+    renderSocials();
+    syncJSON();
+  }
+});
+
+Object.entries(detailFields).forEach(([key, input])=>{
+  const eventName = key === 'available' ? 'change' : 'input';
+  input.addEventListener(eventName, ()=>{
+    if(currentIndex === null) return;
+    const product = state.products[currentIndex];
+    if(key === 'images'){
+      product.images = input.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    }else if(key === 'available'){
+      product.available = input.checked;
+    }else{
+      product[key] = input.value;
+    }
+    updateDetailPreview();
+    renderProductGrid();
+    syncJSON();
+  });
+});
+</script>
+</body>
+</html>
