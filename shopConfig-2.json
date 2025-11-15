@@ -62,7 +62,7 @@
     {
       "title": "Темляк для лыжных палок",
       "slug": "temlyak-swix",
-      "currency": "USD",
+      "currency": "₽",
       "tag": "опт",
       "category": "аксессуары",
       "stock": "под заказ",
@@ -79,8 +79,8 @@
         "img/temlyak_swix_5.jpg",
         "img/temlyak_swix_6.jpg"
       ],
-      "price": 2.8,
-      "oldPrice": 4.2
+      "price": 390,
+      "oldPrice": 590
     }
   ]
 }
