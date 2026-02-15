@@ -115,6 +115,7 @@ async function loadConfig(){
 function rubl(n){ try{ return new Intl.NumberFormat('ru-RU').format(n) + ' ₽'; }catch(_){ return n + ' ₽'; } }
 function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
 function slugify(s){ return (s||'').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,''); }
+const AVITO_NSK_URL = 'https://www.avito.ru/novosibirsk/sport_i_otdyh/1_para_lyzhnyh_skrepok_fisher_4750131835?utm_campaign=native&utm_medium=item_page_android&utm_source=soc_sharing_seller';
 
 function renderSocials(items){
   const wrap=document.getElementById('socials'); wrap.innerHTML='';
@@ -157,7 +158,8 @@ function renderGrid(items){
           </div>
         </a>
         <div class="card-actions">
-          <a class="btn small" target="_blank" rel="noopener" href="${p.avitoUrl||'#'}">Avito</a>
+          <a class="btn small" target="_blank" rel="noopener" href="${p.avitoUrl||'#'}">Авито Мск</a>
+          <a class="btn small" target="_blank" rel="noopener" href="${p.avitoNskUrl||AVITO_NSK_URL}">Авито Нск</a>
           <a class="btn small primary" href="product.html?slug=${encodeURIComponent(p.slug || slugify(p.title))}">Подробнее</a>
         </div>
       </article>
