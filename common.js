@@ -21,7 +21,8 @@ export async function loadConfig(){
     name:'BVB', tag:'Официальная страница магазина',
     email:'sales@example.com', phone:'+7 (900) 000-00-00',
     socials:[
-      {label:'Avito', url:'https://www.avito.ru/brands/i184536091?src=sharing', icon:'avito'},
+      {label:'Авито Москва', url:'https://www.avito.ru/brands/i184536091?src=sharing', icon:'avito'},
+      {label:'Авито Новосибирск', url:'https://www.avito.ru/user/1f5f6349b1b4e5e061c17ae33aae143c/profile?src=sharing', icon:'avito'},
       {label:'Telegram', url:'https://t.me/', icon:'telegram'},
       {label:'WhatsApp', url:'https://wa.me/', icon:'whatsapp'}
     ],

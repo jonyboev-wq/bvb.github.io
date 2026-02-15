@@ -1,8 +1,13 @@
 {
   "socials": [
     {
-      "label": "Avito",
+      "label": "Авито Москва",
       "url": "https://www.avito.ru/brands/i184536091?src=sharing",
+      "icon": "avito"
+    },
+    {
+      "label": "Авито Новосибирск",
+      "url": "https://www.avito.ru/user/1f5f6349b1b4e5e061c17ae33aae143c/profile?src=sharing",
       "icon": "avito"
     },
     {
