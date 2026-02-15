@@ -127,11 +127,27 @@ function renderSocials(items){
 function renderGrid(items){
   const grid=document.getElementById('grid'); grid.innerHTML='';
   items.forEach(p=>{
+    const images = Array.isArray(p.images) && p.images.length ? p.images.filter(Boolean) : [];
+    const safeImages = images.length ? images : [''];
+    const hasGallery = safeImages.length > 1;
+    const dotsHtml = hasGallery
+      ? `<div class="card-gallery-dots">${
+          safeImages.map((_, i)=>`<button type="button" class="card-gallery-dot${i===0?' active':''}" data-dot-index="${i}" aria-label="Фото ${i+1}"></button>`).join('')
+        }</div>`
+      : '';
+    const galleryControls = hasGallery
+      ? `
+          <button type="button" class="card-gallery-nav prev" data-shift="-1" aria-label="Предыдущее фото">‹</button>
+          <button type="button" class="card-gallery-nav next" data-shift="1" aria-label="Следующее фото">›</button>
+          ${dotsHtml}
+        `
+      : '';
     const card=el(`
       <article class="card">
         <a href="product.html?slug=${encodeURIComponent(p.slug || slugify(p.title))}">
           <div class="card-img">
-            <img src="${(p.images&&p.images[0])||''}" alt="${p.title}" loading="lazy">
+            <img src="${safeImages[0]}" alt="${p.title}" loading="lazy">
+            ${galleryControls}
           </div>
           <div class="card-pad">
             <h3 style="margin:0 0 6px">${p.title}</h3>
@@ -146,6 +162,33 @@ function renderGrid(items){
         </div>
       </article>
     `);
+    if(hasGallery){
+      const imageEl = card.querySelector('.card-img img');
+      const dots = [...card.querySelectorAll('[data-dot-index]')];
+      let currentPhotoIndex = 0;
+
+      const setPhoto = (nextIndex)=>{
+        currentPhotoIndex = (nextIndex + safeImages.length) % safeImages.length;
+        imageEl.src = safeImages[currentPhotoIndex];
+        dots.forEach((dot, i)=>dot.classList.toggle('active', i === currentPhotoIndex));
+      };
+
+      card.querySelectorAll('[data-shift]').forEach(btn=>{
+        btn.addEventListener('click', e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          setPhoto(currentPhotoIndex + Number(btn.dataset.shift));
+        });
+      });
+
+      dots.forEach(dot=>{
+        dot.addEventListener('click', e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          setPhoto(Number(dot.dataset.dotIndex));
+        });
+      });
+    }
     grid.appendChild(card);
   });
 }
